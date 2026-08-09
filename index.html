@@ -68,7 +68,11 @@ tr.ref td{color:var(--muted)}
 .stage{background:var(--panel);border:1px solid var(--rule);border-radius:2px;
   padding:1.25rem;display:grid;gap:1.2rem;
   grid-template-columns:minmax(0,17rem) minmax(0,1fr)}
-@media (max-width:46rem){.stage{grid-template-columns:1fr}}
+.media{align-self:start;margin-top:3.25rem;position:sticky;top:clamp(2rem,8vh,5rem)}
+@media (max-width:46rem){
+  .stage{grid-template-columns:1fr}
+  .media{margin-top:0;position:static}
+}
 video{width:100%;border-radius:2px;background:#000;display:block}
 .vcap{font-size:.82rem;color:var(--muted);margin:.55rem 0 0}
 .right{display:flex;flex-direction:column;gap:.8rem;min-width:0}
@@ -147,7 +151,7 @@ footer a{color:var(--ink);text-underline-offset:.18em}
 </section>
 
 <section class="stage">
-  <div>
+  <div class="media">
     <video id="vid" controls playsinline preload="metadata"
       aria-label="Selected LLP test clip"></video>
     <p class="vcap" id="vcap"></p>
