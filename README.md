@@ -1,10 +1,10 @@
-# SCoPE without the future
+# Streaming SCoPE
 
 Interactive demo for training-free, causal audio-visual event parsing on the LLP test split.
 
 **Live demo:** <https://jaemojeong.github.io/>
 
-The site is a single self-contained `index.html`: eight video examples, audio,
+The site is a single self-contained `index.html`: nine video examples, audio,
 predictions, styles, and JavaScript are embedded. No model runs in the browser
 and no external asset is fetched.
 
