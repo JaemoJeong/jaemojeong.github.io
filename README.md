@@ -4,7 +4,7 @@ Interactive demo for training-free, causal audio-visual event parsing on the LLP
 
 **Live demo:** <https://jaemojeong.github.io/>
 
-The page compares a fixed dense cosine readout with SCoPE at zero latency and with a one-second local-persistence readout. All aggregate results cover the full 1,109-video test split. The eight videos are deliberately selected qualitative examples and are labeled as such in the page.
+The page compares a fixed Dense cosine readout at normalized-score threshold `τ = 0.85` with SCoPE at zero temporal lookahead and with a one-second local-persistence readout. All aggregate results cover the full 1,109-video test split. The eight videos are deliberately selected qualitative examples and are labeled as such in the page.
 
 The site is a single self-contained `index.html`: videos, audio, predictions, styles, and JavaScript are embedded. No model runs in the browser and no external asset is fetched.
 
