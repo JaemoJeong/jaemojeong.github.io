@@ -1,12 +1,12 @@
-# Streaming SCoPE
+# SCoPE: Training-Free Audio-Visual Event Perception via Sparse Cross-Modal Prior Exchange
 
 Interactive demo for training-free, causal audio-visual event parsing on the LLP test split.
 
 **Live demo:** <https://jaemojeong.github.io/>
 
-The site is a single self-contained `index.html`: nine video examples, audio,
-predictions, styles, and JavaScript are embedded. No model runs in the browser
-and no external asset is fetched.
+The site is a single self-contained `index.html`: nine video examples, two
+paper figures, audio, predictions, styles, and JavaScript are embedded. No
+model runs in the browser and no external asset is fetched.
 
 ## Local preview
 
