@@ -3,10 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="An interactive, training-free demo of causal audio-visual event parsing with SCoPE.">
+<meta name="description" content="Training-free audio-visual event perception through sparse event competition and reliable cross-modal prior exchange.">
+<meta name="scope-streaming-api" content="">
 <meta name="theme-color" content="#14161A">
 <meta property="og:title" content="SCoPE: Training-Free Audio-Visual Event Perception via Sparse Cross-Modal Prior Exchange">
-<meta property="og:description" content="Interactive streaming demo for training-free audio-visual event perception.">
+<meta property="og:description" content="Training-free audio-visual event perception through sparse event competition and reliable cross-modal prior exchange.">
 <meta property="og:type" content="website">
 <title>SCoPE: Training-Free Audio-Visual Event Perception via Sparse Cross-Modal Prior Exchange</title>
 <style>
@@ -49,6 +50,14 @@ a.project-link:focus-visible{outline:2px solid var(--scope);outline-offset:2px}
 .project-link.disabled{color:var(--muted);cursor:default}
 h2{font-family:var(--serif);font-weight:400;font-size:1.3rem;margin:0 0 .3rem}
 .note{margin:0;color:var(--muted);font-size:.88rem;max-width:47em}
+.mode-tabs{display:flex;gap:.45rem;border-bottom:1px solid var(--rule);margin-top:-.8rem}
+.mode-tab{font:inherit;font-family:var(--mono);font-size:.86rem;cursor:pointer;
+  background:transparent;color:var(--muted);border:0;border-bottom:2px solid transparent;
+  padding:.7rem 1rem;margin-bottom:-1px}
+.mode-tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--scope)}
+.mode-tab:focus-visible{outline:2px solid var(--scope);outline-offset:2px}
+.mode-panel{display:flex;flex-direction:column;gap:2.6rem}
+.mode-panel[hidden]{display:none}
 .figure-stack{display:flex;flex-direction:column;gap:1.35rem;margin-top:1rem}
 .paper-figure{margin:0}
 .paper-figure figcaption{font-size:.86rem;color:var(--muted);margin:0 0 .55rem}
@@ -114,6 +123,62 @@ tr.sep th,tr.sep td{border-top:1px solid var(--rule)}
   font-size:.72rem;color:var(--muted);align-items:center;margin:0}
 .sw{display:inline-block;width:.8rem;height:.8rem;border-radius:2px;
   vertical-align:-1px;margin-right:.3rem;border:1px solid var(--rule)}
+.live-shell{display:flex;flex-direction:column;gap:1.2rem}
+.live-heading{display:flex;flex-direction:column;gap:.35rem}
+.live-heading h2{margin:0}
+.live-badge{align-self:flex-start;margin:0;padding:.24rem .5rem;border:1px solid var(--rule);
+  border-radius:999px;color:var(--muted);font-family:var(--mono);font-size:.69rem;
+  letter-spacing:.06em;text-transform:uppercase}
+.live-disclaimer{margin:0;color:var(--ink);font-family:var(--mono);font-size:.78rem}
+.live-controls{display:flex;align-items:center;gap:.65rem;flex-wrap:wrap}
+.live-button{min-width:6.5rem;min-height:2.75rem;padding:.65rem 1rem;border:1px solid var(--rule);
+  border-radius:2px;background:var(--panel);color:var(--ink);font:600 .86rem var(--mono);
+  cursor:pointer}
+.live-button:hover:not(:disabled){border-color:var(--scope)}
+.live-button:focus-visible{outline:2px solid var(--scope);outline-offset:2px}
+.live-button:disabled{cursor:not-allowed;color:var(--muted);opacity:.62}
+.live-status{margin:0;color:var(--muted);font: .76rem/1.45 var(--mono);flex:1 1 18rem}
+.live-status[data-kind="error"]{color:var(--wrong)}
+.live-layout{display:grid;grid-template-columns:minmax(0,22rem) minmax(0,1fr);gap:1.25rem;
+  align-items:start}
+.live-capture,.live-output{background:var(--panel);border:1px solid var(--rule);
+  border-radius:2px;padding:1rem;min-width:0}
+.live-preview-shell{position:relative;aspect-ratio:16/9;background:#08090b;overflow:hidden;
+  border-radius:2px}
+#live-preview{display:block;width:100%;height:100%;object-fit:contain;background:#08090b}
+.live-preview-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  padding:1.2rem;text-align:center;color:#c5c9d0;font: .75rem/1.5 var(--mono)}
+.live-preview-empty[hidden]{display:none}
+.privacy{margin:.75rem 0 0;color:var(--muted);font-size:.76rem;line-height:1.5}
+.live-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem;
+  margin:0 0 1rem}
+.live-stat{border-bottom:1px solid var(--rule);padding-bottom:.45rem;min-width:0}
+.live-stat dt{color:var(--muted);font: .66rem var(--mono);letter-spacing:.06em;
+  text-transform:uppercase}
+.live-stat dd{margin:.14rem 0 0;color:var(--ink);font: .76rem/1.35 var(--mono);
+  overflow-wrap:anywhere}
+.live-timeline-head{display:flex;justify-content:space-between;gap:1rem;align-items:baseline;
+  margin-bottom:.65rem}
+.live-timeline-head h3{margin:0;font-family:var(--serif);font-size:1rem;font-weight:400}
+.live-timeline-head span{color:var(--muted);font: .68rem var(--mono)}
+.live-results{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.55rem;
+  max-height:30rem;overflow:auto;overscroll-behavior:contain}
+.live-empty{padding:1rem;border:1px dashed var(--rule);color:var(--muted);
+  font: .75rem/1.5 var(--mono)}
+.live-result{border-left:2px solid var(--rule);padding:.55rem .65rem;background:var(--ground)}
+.live-result-head{display:flex;justify-content:space-between;gap:.75rem;margin-bottom:.4rem;
+  color:var(--muted);font: .66rem/1.35 var(--mono)}
+.live-method{display:grid;grid-template-columns:3.8rem minmax(0,1fr);gap:.5rem;
+  align-items:start;margin-top:.28rem}
+.live-method strong{color:var(--ink);font:600 .72rem/1.5 var(--mono)}
+.live-predictions{display:flex;gap:.3rem;flex-wrap:wrap;min-width:0}
+.live-chip{display:inline-flex;max-width:100%;padding:.12rem .38rem;border:1px solid var(--rule);
+  border-radius:999px;color:var(--ink);font: .68rem/1.45 var(--mono);overflow-wrap:anywhere}
+.live-none{color:var(--muted);font: .68rem/1.5 var(--mono)}
+@media (max-width:46rem){
+  .live-layout{grid-template-columns:1fr}
+  .live-stats{grid-template-columns:1fr 1fr}
+}
 footer{border-top:1px solid var(--rule);padding-top:1rem;color:var(--muted);
   font-size:.75rem}
 footer p{margin:0}
@@ -128,9 +193,9 @@ footer code{font-family:var(--mono);font-size:.74rem;color:var(--ink)}
 
 <div class="wrap">
 <header>
-  <p class="eyebrow">Interactive streaming demo</p>
+  <p class="eyebrow">Interactive demo</p>
   <h1>SCoPE: Training-Free Audio-Visual Event Perception via Sparse Cross-Modal Prior Exchange</h1>
-  <p class="lede">Causal predictions at one-second resolution.</p>
+  <p class="lede">Training-free audio-visual event perception through sparse event competition and reliable cross-modal prior exchange.</p>
   <nav class="links" aria-label="Project links">
     <a class="project-link"
       href="https://drive.google.com/file/d/1sjqezivGFSlQnWtfo0rZbkfds_KWiCvV/view?usp=sharing"
@@ -140,6 +205,14 @@ footer code{font-family:var(--mono);font-size:.74rem;color:var(--ink)}
   </nav>
 </header>
 
+<nav class="mode-tabs" role="tablist" aria-label="Demo mode">
+  <button class="mode-tab" type="button" role="tab" id="mode-curated"
+    aria-controls="curated-panel" aria-selected="true" tabindex="0">Curated demo</button>
+  <button class="mode-tab" type="button" role="tab" id="mode-live"
+    aria-controls="live-panel" aria-selected="false" tabindex="-1">Live streaming</button>
+</nav>
+
+<div class="mode-panel" id="curated-panel" role="tabpanel" aria-labelledby="mode-curated">
 <section aria-labelledby="overview-title">
   <h2 id="overview-title">Overview</h2>
   <div class="figure-stack">
@@ -194,6 +267,51 @@ footer code{font-family:var(--mono);font-size:.74rem;color:var(--ink)}
     </p>
   </div>
 </section>
+</div>
+
+<div class="mode-panel" id="live-panel" role="tabpanel" aria-labelledby="mode-live" hidden>
+  <section class="live-shell" aria-labelledby="live-title">
+    <div class="live-heading">
+      <p class="live-badge">LanguageBind only</p>
+      <h2 id="live-title">Live streaming</h2>
+      <p class="live-disclaimer">Exploratory streaming adaptation — not evaluated in the paper.</p>
+      <p class="note">Share a browser tab with its audio enabled. After each complete one-second observation, the current frame and that audio second are processed causally; no ground truth or evaluation metric is shown. Predictions are restricted to the frozen LLP-25 vocabulary and use fixed LLP centering statistics. Stop the session before seeking or changing the source, then start again to create a new causal state.</p>
+    </div>
+
+    <div class="live-controls">
+      <button class="live-button" type="button" id="live-start">Start</button>
+      <button class="live-button" type="button" id="live-stop" disabled>Stop</button>
+      <p class="live-status" id="live-status" role="status" aria-live="polite"></p>
+    </div>
+
+    <div class="live-layout">
+      <div class="live-capture">
+        <div class="live-preview-shell">
+          <video id="live-preview" autoplay muted playsinline aria-label="Shared browser tab preview"></video>
+          <div class="live-preview-empty" id="live-preview-empty">Your shared browser tab will appear here.</div>
+        </div>
+        <p class="privacy"><strong>Privacy.</strong> Capture starts only after you choose a tab. One frame and one second of audio are sent per inference request. This page does not persist captured media; in-memory capture and client state are cleared when you stop sharing or leave this tab.</p>
+      </div>
+
+      <div class="live-output">
+        <dl class="live-stats" aria-label="Live processing status">
+          <div class="live-stat"><dt>State</dt><dd id="live-state">Unavailable</dd></div>
+          <div class="live-stat"><dt>Acquisition</dt><dd id="live-acquisition">—</dd></div>
+          <div class="live-stat"><dt>Network</dt><dd id="live-network">—</dd></div>
+          <div class="live-stat"><dt>Compute</dt><dd id="live-compute">—</dd></div>
+          <div class="live-stat"><dt>Queue / backpressure</dt><dd id="live-queue">0 queued · 0 dropped</dd></div>
+        </dl>
+        <div class="live-timeline-head">
+          <h3>One-second predictions</h3>
+          <span id="live-result-count">0 results</span>
+        </div>
+        <ol class="live-results" id="live-results" aria-live="polite">
+          <li class="live-empty">No prediction has been received. Results are never simulated or loaded from the curated examples.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+</div>
 
 <footer>
   <p class="checkpoints"><strong>Backbone checkpoints.</strong><br>
@@ -371,6 +489,667 @@ function draw(){
   rows.push(...panel("scope0", "SCoPE", true, 0));
   rows.push(...panel("scope1", "SCoPE · 1 s latency", true, 1));
   document.getElementById("grid").innerHTML = rows.join("");
+}
+
+// Live streaming is a separate, LanguageBind-only client. It never reads from
+// BUNDLE and it never invents predictions when the inference service is absent.
+const LIVE_API_BASE = (()=>{
+  const raw = document.querySelector('meta[name="scope-streaming-api"]')
+    ?.content.trim();
+  if(!raw) return "";
+  try{
+    const parsed = new URL(raw);
+    return parsed.protocol === "https:"
+      ? parsed.href.replace(/\/+$/, "")
+      : "";
+  }catch(_error){ return ""; }
+})();
+const LIVE_TARGET_RATE = 16000;
+const LIVE_QUEUE_LIMIT = 1;
+const LIVE_FRAME_MAX_WIDTH = 768;
+const LIVE_FRAME_MAX_BYTES = 700 * 1024;
+const LIVE_SCHEMA_VERSION = "scope-streaming.v1";
+const LIVE_MODEL_NAME = "LanguageBind_unit (Audio_FT + Image)";
+const LIVE_CLASSES = Object.freeze([
+  "Speech","Car","Cheering","Dog","Cat","Frying_(food)",
+  "Basketball_bounce","Fire_alarm","Chainsaw","Cello","Banjo","Singing",
+  "Chicken_rooster","Violin_fiddle","Vacuum_cleaner","Baby_laughter",
+  "Accordion","Lawn_mower","Motorcycle","Helicopter","Acoustic_guitar",
+  "Telephone_bell_ringing","Baby_cry_infant_cry","Blender","Clapping",
+]);
+const LIVE_EMPTY_COPY = "No prediction has been received. Results are never simulated or loaded from the curated examples.";
+
+const live = {
+  running:false, starting:false, stopping:false, generation:0,
+  stream:null, sessionId:"", classes:[], maxSegments:60,
+  audioContext:null, audioSource:null, audioProcessor:null, silentGain:null,
+  sourceRate:0, audioParts:[], audioSamples:0, acquisitionStartedAt:0,
+  canvas:document.createElement("canvas"), nextSequence:0, observedSeconds:0,
+  queue:[], preparing:0, processing:false, processingSequence:null, dropped:0,
+  requestController:null, startupController:null, resultCount:0,
+};
+const liveEl = {
+  start:document.getElementById("live-start"),
+  stop:document.getElementById("live-stop"),
+  status:document.getElementById("live-status"),
+  state:document.getElementById("live-state"),
+  acquisition:document.getElementById("live-acquisition"),
+  network:document.getElementById("live-network"),
+  compute:document.getElementById("live-compute"),
+  queue:document.getElementById("live-queue"),
+  results:document.getElementById("live-results"),
+  count:document.getElementById("live-result-count"),
+  preview:document.getElementById("live-preview"),
+  previewEmpty:document.getElementById("live-preview-empty"),
+};
+
+function setLiveStatus(message, kind="idle"){
+  liveEl.status.textContent = message;
+  liveEl.status.dataset.kind = kind;
+}
+
+function setLiveControls(active){
+  liveEl.start.disabled = active || !LIVE_API_BASE ||
+    !navigator.mediaDevices?.getDisplayMedia;
+  liveEl.stop.disabled = !active;
+}
+
+function formatMs(value){
+  return Number.isFinite(value) ? `${Math.max(0, Math.round(value))} ms` : "—";
+}
+
+function resetLiveOutput(){
+  live.resultCount = 0;
+  liveEl.state.textContent = LIVE_API_BASE ? "Ready" : "Unavailable";
+  liveEl.acquisition.textContent = "—";
+  liveEl.network.textContent = "—";
+  liveEl.compute.textContent = "—";
+  liveEl.queue.textContent = "0 queued · 0 dropped";
+  liveEl.count.textContent = "0 results";
+  liveEl.results.replaceChildren();
+  const empty = document.createElement("li");
+  empty.className = "live-empty";
+  empty.textContent = LIVE_EMPTY_COPY;
+  liveEl.results.append(empty);
+}
+
+function updateLiveQueue(){
+  const waiting = live.queue.length + live.preparing;
+  liveEl.queue.textContent = `${waiting} queued · ${live.dropped} dropped`;
+  if(!live.running) return;
+  if(live.processing) liveEl.state.textContent = `Processing segment ${live.processingSequence}`;
+  else if(waiting) liveEl.state.textContent = "Queued";
+  else liveEl.state.textContent = "Collecting 1 s audio";
+}
+
+function apiUrl(path){ return `${LIVE_API_BASE}${path}`; }
+
+async function readJson(response){
+  const contentType = response.headers.get("content-type") || "";
+  const payload = contentType.includes("application/json")
+    ? await response.json()
+    : {detail:await response.text()};
+  if(!response.ok){
+    const detail = typeof payload?.detail === "string"
+      ? payload.detail
+      : `HTTP ${response.status}`;
+    throw new Error(detail);
+  }
+  return payload;
+}
+
+function releaseLiveMedia(){
+  if(live.audioProcessor){
+    live.audioProcessor.onaudioprocess = null;
+    try{ live.audioProcessor.disconnect(); }catch(_error){}
+  }
+  if(live.audioSource){ try{ live.audioSource.disconnect(); }catch(_error){} }
+  if(live.silentGain){ try{ live.silentGain.disconnect(); }catch(_error){} }
+  if(live.audioContext){ void live.audioContext.close().catch(()=>{}); }
+  if(live.stream){ live.stream.getTracks().forEach(track=>track.stop()); }
+  live.audioProcessor = null;
+  live.audioSource = null;
+  live.silentGain = null;
+  live.audioContext = null;
+  live.stream = null;
+  live.canvas.width = 0;
+  live.canvas.height = 0;
+  liveEl.preview.pause();
+  liveEl.preview.srcObject = null;
+  liveEl.previewEmpty.hidden = false;
+}
+
+function clearLiveRunState(){
+  live.audioParts = [];
+  live.audioSamples = 0;
+  live.acquisitionStartedAt = 0;
+  live.nextSequence = 0;
+  live.observedSeconds = 0;
+  live.queue = [];
+  live.preparing = 0;
+  live.processing = false;
+  live.processingSequence = null;
+  live.dropped = 0;
+  live.classes = [];
+  live.maxSegments = 60;
+}
+
+async function stopLive(message="Stopped. Capture data and causal state were cleared.", kind="idle"){
+  if(live.stopping) return;
+  live.stopping = true;
+  const sessionId = live.sessionId;
+  live.running = false;
+  live.starting = false;
+  live.generation += 1;
+  live.requestController?.abort();
+  live.startupController?.abort();
+  live.requestController = null;
+  live.startupController = null;
+  live.sessionId = "";
+  releaseLiveMedia();
+  clearLiveRunState();
+  resetLiveOutput();
+  setLiveControls(false);
+  setLiveStatus(message, kind);
+  live.stopping = false;
+  if(sessionId && LIVE_API_BASE){
+    try{
+      await fetch(apiUrl(`/v1/sessions/${encodeURIComponent(sessionId)}`), {
+        method:"DELETE", keepalive:true,
+      });
+    }catch(_error){}
+  }
+}
+
+function takeLiveSamples(count){
+  const output = new Float32Array(count);
+  let offset = 0;
+  while(offset < count && live.audioParts.length){
+    const part = live.audioParts[0];
+    const needed = count - offset;
+    const used = Math.min(needed, part.length);
+    output.set(part.subarray(0, used), offset);
+    offset += used;
+    if(used === part.length) live.audioParts.shift();
+    else live.audioParts[0] = part.subarray(used);
+  }
+  live.audioSamples -= count;
+  return output;
+}
+
+function encodeMonoWav(samples){
+  const buffer = new ArrayBuffer(44 + samples.length * 2);
+  const view = new DataView(buffer);
+  const write = (offset, value)=>{
+    for(let i=0;i<value.length;i++) view.setUint8(offset+i, value.charCodeAt(i));
+  };
+  write(0, "RIFF");
+  view.setUint32(4, 36 + samples.length * 2, true);
+  write(8, "WAVE");
+  write(12, "fmt ");
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, 1, true);
+  view.setUint32(24, LIVE_TARGET_RATE, true);
+  view.setUint32(28, LIVE_TARGET_RATE * 2, true);
+  view.setUint16(32, 2, true);
+  view.setUint16(34, 16, true);
+  write(36, "data");
+  view.setUint32(40, samples.length * 2, true);
+  for(let i=0;i<samples.length;i++){
+    const sample = Math.max(-1, Math.min(1, samples[i]));
+    view.setInt16(44 + i * 2,
+      sample < 0 ? sample * 0x8000 : sample * 0x7fff, true);
+  }
+  return new Blob([buffer], {type:"audio/wav"});
+}
+
+function captureLiveFrame(){
+  const video = liveEl.preview;
+  if(video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA ||
+      !video.videoWidth || !video.videoHeight){
+    return Promise.reject(new Error("The shared tab has not produced a video frame yet."));
+  }
+  const scale = Math.min(1, LIVE_FRAME_MAX_WIDTH / video.videoWidth);
+  live.canvas.width = Math.max(1, Math.round(video.videoWidth * scale));
+  live.canvas.height = Math.max(1, Math.round(video.videoHeight * scale));
+  const context = live.canvas.getContext("2d", {alpha:false});
+  context.drawImage(video, 0, 0, live.canvas.width, live.canvas.height);
+  const encode = quality => new Promise((resolve, reject)=>{
+    live.canvas.toBlob(blob=>blob ? resolve(blob) :
+      reject(new Error("Could not encode the current video frame.")),
+    "image/jpeg", quality);
+  });
+  return encode(.84).then(blob=>blob.size <= LIVE_FRAME_MAX_BYTES
+    ? blob
+    : encode(.6)).then(blob=>{
+      if(blob.size > LIVE_FRAME_MAX_BYTES)
+        throw new Error("The encoded frame exceeded the inference service payload limit.");
+      return blob;
+  });
+}
+
+async function prepareLiveChunk(sourceSamples, acquisitionMs, observedSecond, runGeneration){
+  if(!live.running || runGeneration !== live.generation) return;
+  // Keep JPEG preparation single-file so asynchronous canvas encoding cannot
+  // reorder adjacent audio seconds. Stop rather than create a discontinuous
+  // causal prefix if preparation ever falls behind.
+  if(live.preparing){
+    void stopLive("Live inference stopped because frame encoding fell behind; no observed second was skipped inside the causal prefix.", "error");
+    return;
+  }
+  const workCount = (live.processing ? 1 : 0) + live.queue.length + live.preparing;
+  if(workCount >= 1 + LIVE_QUEUE_LIMIT){
+    void stopLive("Live inference stopped because processing fell behind; no observed second was skipped inside the causal prefix.", "error");
+    return;
+  }
+  if(observedSecond >= live.maxSegments || live.nextSequence >= live.maxSegments){
+    void stopLive("The 60-second live session ended and its causal state was cleared.");
+    return;
+  }
+  live.preparing += 1;
+  updateLiveQueue();
+  try{
+    const frame = await captureLiveFrame();
+    if(!live.running || runGeneration !== live.generation) return;
+    const sequence = live.nextSequence++;
+    const audio = encodeMonoWav(sourceSamples);
+    live.queue.push({sequence, observedSecond, frame, audio, acquisitionMs, runGeneration});
+    updateLiveQueue();
+    void drainLiveQueue();
+  }catch(error){
+    if(live.running && runGeneration === live.generation){
+      void stopLive(`Live inference stopped: ${error.message || "a capture chunk could not be prepared"}`, "error");
+    }
+  }finally{
+    live.preparing = Math.max(0, live.preparing - 1);
+    updateLiveQueue();
+  }
+}
+
+function handleLiveAudio(event){
+  if(!live.running) return;
+  const input = event.inputBuffer;
+  const length = input.length;
+  const mono = new Float32Array(length);
+  for(let channel=0;channel<input.numberOfChannels;channel++){
+    const samples = input.getChannelData(channel);
+    for(let i=0;i<length;i++) mono[i] += samples[i] / input.numberOfChannels;
+  }
+  live.audioParts.push(mono);
+  live.audioSamples += length;
+  const samplesPerSecond = Math.round(live.sourceRate);
+  while(live.audioSamples >= samplesPerSecond){
+    const now = performance.now();
+    const acquisitionMs = now - live.acquisitionStartedAt;
+    live.acquisitionStartedAt = now;
+    const oneSecond = takeLiveSamples(samplesPerSecond);
+    const observedSecond = live.observedSeconds++;
+    void prepareLiveChunk(oneSecond, acquisitionMs, observedSecond, live.generation);
+  }
+}
+
+function setupLiveAudio(stream){
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if(!AudioContextClass) throw new Error("Web Audio capture is unavailable in this browser.");
+  live.audioContext = new AudioContextClass({
+    latencyHint:"interactive", sampleRate:LIVE_TARGET_RATE,
+  });
+  if(live.audioContext.sampleRate !== LIVE_TARGET_RATE)
+    throw new Error("This browser could not provide the required 16 kHz audio stream.");
+  live.sourceRate = live.audioContext.sampleRate;
+  live.audioSource = live.audioContext.createMediaStreamSource(stream);
+  live.audioProcessor = live.audioContext.createScriptProcessor(4096, 1, 1);
+  live.silentGain = live.audioContext.createGain();
+  live.silentGain.gain.value = 0;
+  live.audioSource.connect(live.audioProcessor);
+  live.audioProcessor.connect(live.silentGain);
+  live.silentGain.connect(live.audioContext.destination);
+}
+
+function branchLabels(methodBlock, branch){
+  const node = methodBlock?.branches?.[branch] ?? methodBlock?.[branch];
+  if(!node) return [];
+  if(Array.isArray(node)){
+    return node.flatMap(item=>{
+      if(typeof item === "string") return [item];
+      if(item && typeof item.label === "string" && item.active !== false) return [item.label];
+      return [];
+    });
+  }
+  const predictions = node.predictions;
+  if(Array.isArray(predictions)){
+    if(predictions.every(value=>typeof value === "boolean" || value === 0 || value === 1)){
+      return predictions.flatMap((active,index)=>active && live.classes[index]
+        ? [String(live.classes[index])] : []);
+    }
+    return predictions.flatMap(item=>{
+      if(typeof item === "string") return [item];
+      if(item && typeof item.label === "string" && item.active !== false) return [item.label];
+      return [];
+    });
+  }
+  return [];
+}
+
+function methodLabels(payload, method){
+  const methodBlock = payload?.[method] ?? payload?.predictions?.[method];
+  if(!methodBlock) return [];
+  const output = [];
+  for(const branch of ["audio", "visual"]){
+    for(const label of branchLabels(methodBlock, branch)){
+      output.push(`${branch === "audio" ? "Audio" : "Visual"} · ${String(label).replace(/_/g, " ")}`);
+    }
+  }
+  if(!output.length && Array.isArray(methodBlock)){
+    for(const item of methodBlock){
+      if(typeof item === "string") output.push(item.replace(/_/g, " "));
+      else if(item && typeof item.label === "string" && item.active !== false)
+        output.push(item.label.replace(/_/g, " "));
+    }
+  }
+  return output;
+}
+
+function appendLiveMethod(parent, name, labels){
+  const row = document.createElement("div");
+  row.className = "live-method";
+  const title = document.createElement("strong");
+  title.textContent = name;
+  const values = document.createElement("div");
+  values.className = "live-predictions";
+  if(labels.length){
+    for(const label of labels){
+      const chip = document.createElement("span");
+      chip.className = "live-chip";
+      chip.textContent = label;
+      values.append(chip);
+    }
+  }else{
+    const none = document.createElement("span");
+    none.className = "live-none";
+    none.textContent = "No active labels";
+    values.append(none);
+  }
+  row.append(title, values);
+  parent.append(row);
+}
+
+function appendLiveResult(payload, item, roundTripMs, computeMs, networkMs){
+  if(live.resultCount === 0) liveEl.results.replaceChildren();
+  const result = document.createElement("li");
+  result.className = "live-result";
+  const head = document.createElement("div");
+  head.className = "live-result-head";
+  const segment = document.createElement("span");
+  segment.textContent = `${item.observedSecond}–${item.observedSecond + 1} s`;
+  const latency = document.createElement("span");
+  latency.textContent = `acquire ${formatMs(item.acquisitionMs)} · network ${formatMs(networkMs)} · compute ${formatMs(computeMs)} · round trip ${formatMs(roundTripMs)}`;
+  head.append(segment, latency);
+  result.append(head);
+  appendLiveMethod(result, "Dense", methodLabels(payload, "dense"));
+  appendLiveMethod(result, "SCoPE", methodLabels(payload, "scope"));
+  liveEl.results.append(result);
+  live.resultCount += 1;
+  liveEl.count.textContent = `${live.resultCount} result${live.resultCount === 1 ? "" : "s"}`;
+  liveEl.results.scrollTop = liveEl.results.scrollHeight;
+}
+
+function serverComputeMs(payload){
+  const value = payload?.timing_ms?.total ?? payload?.timing?.total_ms ??
+    payload?.timing?.total ?? payload?.compute_ms;
+  return Number.isFinite(Number(value)) ? Number(value) : NaN;
+}
+
+function exactLiveClasses(value){
+  return Array.isArray(value) && value.length === LIVE_CLASSES.length &&
+    value.every((label,index)=>label === LIVE_CLASSES[index]);
+}
+
+function validateLiveBranch(method, branch){
+  const block = method?.branches?.[branch];
+  if(!block || !Array.isArray(block.scores) || !Array.isArray(block.predictions) ||
+     block.scores.length !== LIVE_CLASSES.length ||
+     block.predictions.length !== LIVE_CLASSES.length ||
+     !block.scores.every(value=>Number.isFinite(Number(value))) ||
+     !block.predictions.every(value=>typeof value === "boolean")){
+    throw new Error(`The inference service returned an invalid ${branch} prediction branch.`);
+  }
+}
+
+function validateLivePayload(payload, sequence){
+  if(payload?.schema_version !== LIVE_SCHEMA_VERSION || Object.hasOwn(payload,"ground_truth") ||
+     !exactLiveClasses(payload?.classes))
+    throw new Error("The inference service returned an incompatible response contract.");
+  if(Number(payload.sequence) !== sequence ||
+     Number(payload.time_start_seconds) !== sequence ||
+     Number(payload.time_end_seconds) !== sequence + 1)
+    throw new Error("The inference service returned an out-of-order result.");
+  if(payload?.dense?.threshold !== .85 || payload?.dense?.comparator !== ">" ||
+     payload?.dense?.score_kind !== "class_axis_zscore_sigmoid")
+    throw new Error("The inference service returned a different Dense readout.");
+  if(payload?.scope?.causal !== true || Number(payload?.scope?.future_segments_used) !== 0 ||
+     Number(payload?.scope?.prefix_segments) !== sequence + 1 ||
+     payload?.scope?.score_kind !== "raw_nonnegative_stage2_weight")
+    throw new Error("The inference service returned a non-causal or incompatible SCoPE result.");
+  for(const method of [payload.dense, payload.scope]){
+    for(const branch of ["audio","visual","audio_visual"])
+      validateLiveBranch(method, branch);
+  }
+}
+
+function validateLiveSession(session){
+  if(!session?.session_id || session.schema_version !== LIVE_SCHEMA_VERSION ||
+     session.status !== "running" || session.mode !== "languagebind" ||
+     session.model !== LIVE_MODEL_NAME || Object.hasOwn(session,"ground_truth") ||
+     !exactLiveClasses(session.classes))
+    throw new Error("The configured endpoint is not the expected production LanguageBind service.");
+  const maxSeconds = Number(session.max_seconds);
+  if(!Number.isInteger(maxSeconds) || maxSeconds < 1 || maxSeconds > 60)
+    throw new Error("The inference service returned an invalid session duration.");
+  return maxSeconds;
+}
+
+async function drainLiveQueue(){
+  if(!live.running || live.processing || !live.queue.length) return;
+  const item = live.queue.shift();
+  if(item.runGeneration !== live.generation) return;
+  live.processing = true;
+  live.processingSequence = item.sequence;
+  updateLiveQueue();
+  setLiveStatus(`Sending segment ${item.sequence}; requests are processed strictly in order.`);
+  const form = new FormData();
+  form.append("sequence", String(item.sequence));
+  form.append("frame", item.frame, `frame-${item.sequence}.jpg`);
+  form.append("audio", item.audio, `audio-${item.sequence}.wav`);
+  const controller = new AbortController();
+  live.requestController = controller;
+  const requestedAt = performance.now();
+  try{
+    const response = await fetch(apiUrl(`/v1/sessions/${encodeURIComponent(live.sessionId)}/chunks`), {
+      method:"POST", body:form, signal:controller.signal,
+    });
+    const payload = await readJson(response);
+    if(!live.running || item.runGeneration !== live.generation) return;
+    validateLivePayload(payload, item.sequence);
+    const roundTripMs = performance.now() - requestedAt;
+    const computeMs = serverComputeMs(payload);
+    const networkMs = Number.isFinite(computeMs)
+      ? Math.max(0, roundTripMs - computeMs)
+      : roundTripMs;
+    liveEl.acquisition.textContent = formatMs(item.acquisitionMs);
+    liveEl.network.textContent = formatMs(networkMs);
+    liveEl.compute.textContent = formatMs(computeMs);
+    appendLiveResult(payload, item, roundTripMs, computeMs, networkMs);
+    setLiveStatus(`Segment ${item.sequence} received. Collecting the next complete audio second.`);
+  }catch(error){
+    if(error.name !== "AbortError" && live.running && item.runGeneration === live.generation){
+      await stopLive(`Live inference stopped: ${error.message || "request failed"}`, "error");
+      return;
+    }
+  }finally{
+    if(item.runGeneration === live.generation){
+      live.processing = false;
+      live.processingSequence = null;
+      live.requestController = null;
+      updateLiveQueue();
+      if(live.queue.length) void drainLiveQueue();
+    }
+  }
+}
+
+async function startLive(){
+  if(live.running || live.starting || !LIVE_API_BASE) return;
+  live.starting = true;
+  const runGeneration = ++live.generation;
+  clearLiveRunState();
+  resetLiveOutput();
+  setLiveControls(true);
+  liveEl.state.textContent = "Choosing browser tab";
+  setLiveStatus("Choose a browser tab and enable Share tab audio in the capture dialog.");
+  try{
+    const stream = await navigator.mediaDevices.getDisplayMedia({
+      video:{frameRate:{ideal:10,max:15},width:{ideal:1280},height:{ideal:720}},
+      audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false},
+      preferCurrentTab:false,
+      selfBrowserSurface:"exclude",
+      surfaceSwitching:"exclude",
+      monitorTypeSurfaces:"exclude",
+      systemAudio:"include",
+    });
+    if(runGeneration !== live.generation){
+      stream.getTracks().forEach(track=>track.stop());
+      return;
+    }
+    live.stream = stream;
+    const videoTrack = stream.getVideoTracks()[0];
+    const audioTrack = stream.getAudioTracks()[0];
+    const displaySurface = videoTrack?.getSettings?.().displaySurface;
+    if(!videoTrack || (displaySurface && displaySurface !== "browser"))
+      throw new Error("Choose a browser tab, not a window or an entire screen.");
+    if(!audioTrack)
+      throw new Error("No tab audio was shared. Start again and enable Share tab audio.");
+    const captureEnded = ()=>{
+      if(live.running || live.starting)
+        void stopLive("Tab sharing ended. Capture data and causal state were cleared.");
+    };
+    stream.addEventListener("inactive", captureEnded, {once:true});
+    videoTrack.addEventListener("ended", captureEnded, {once:true});
+    audioTrack.addEventListener("ended", captureEnded, {once:true});
+    liveEl.preview.srcObject = stream;
+    liveEl.previewEmpty.hidden = true;
+    await liveEl.preview.play();
+    setupLiveAudio(stream);
+    await live.audioContext.resume();
+    if(live.audioContext.state !== "running")
+      throw new Error("Tab audio could not start. Interact with the shared tab, then try again.");
+
+    liveEl.state.textContent = "Connecting";
+    setLiveStatus("Opening a short-lived causal inference session…");
+    const controller = new AbortController();
+    live.startupController = controller;
+    const response = await fetch(apiUrl("/v1/sessions"), {
+      method:"POST",
+      headers:{"content-type":"application/json"},
+      body:"{}",
+      signal:controller.signal,
+    });
+    const session = await readJson(response);
+    if(runGeneration !== live.generation){
+      if(session?.session_id){
+        void fetch(apiUrl(`/v1/sessions/${encodeURIComponent(session.session_id)}`), {
+          method:"DELETE", keepalive:true,
+        }).catch(()=>{});
+      }
+      return;
+    }
+    const maxSeconds = validateLiveSession(session);
+    live.sessionId = String(session.session_id);
+    live.classes = [...LIVE_CLASSES];
+    live.maxSegments = maxSeconds;
+    live.startupController = null;
+    live.running = true;
+    live.starting = false;
+    live.acquisitionStartedAt = performance.now();
+    live.audioProcessor.onaudioprocess = handleLiveAudio;
+    liveEl.state.textContent = "Collecting 1 s audio";
+    setLiveStatus("Capture is active. The first result follows one complete second of observation.");
+  }catch(error){
+    if(runGeneration !== live.generation || error.name === "AbortError") return;
+    const sessionId = live.sessionId;
+    live.sessionId = "";
+    live.running = false;
+    live.starting = false;
+    live.startupController = null;
+    releaseLiveMedia();
+    clearLiveRunState();
+    resetLiveOutput();
+    setLiveControls(false);
+    const message = error.name === "NotAllowedError"
+      ? "Tab sharing was cancelled or denied."
+      : error.message || "Live capture could not start.";
+    setLiveStatus(message, "error");
+    if(sessionId){
+      void fetch(apiUrl(`/v1/sessions/${encodeURIComponent(sessionId)}`), {
+        method:"DELETE", keepalive:true,
+      }).catch(()=>{});
+    }
+  }
+}
+
+function setDemoMode(mode, focus=false){
+  for(const name of ["curated", "live"]){
+    const selected = name === mode;
+    const tab = document.getElementById(`mode-${name}`);
+    const panel = document.getElementById(`${name}-panel`);
+    tab.setAttribute("aria-selected", String(selected));
+    tab.tabIndex = selected ? 0 : -1;
+    panel.hidden = !selected;
+  }
+  if(mode === "curated" && (live.running || live.starting))
+    void stopLive("Live capture stopped when you returned to the curated demo.");
+  if(focus) document.getElementById(`mode-${mode}`).focus();
+}
+
+for(const mode of ["curated", "live"]){
+  document.getElementById(`mode-${mode}`).addEventListener("click", ()=>setDemoMode(mode));
+}
+document.querySelector(".mode-tabs").addEventListener("keydown", event=>{
+  if(!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+  event.preventDefault();
+  const current = document.getElementById("mode-live").getAttribute("aria-selected") === "true"
+    ? "live" : "curated";
+  setDemoMode(current === "live" ? "curated" : "live", true);
+});
+liveEl.start.addEventListener("click", startLive);
+liveEl.stop.addEventListener("click", ()=>void stopLive());
+window.addEventListener("pagehide", ()=>{
+  const sessionId = live.sessionId;
+  live.running = false;
+  live.starting = false;
+  live.generation += 1;
+  live.requestController?.abort();
+  live.startupController?.abort();
+  live.requestController = null;
+  live.startupController = null;
+  live.sessionId = "";
+  releaseLiveMedia();
+  clearLiveRunState();
+  if(sessionId && LIVE_API_BASE){
+    void fetch(apiUrl(`/v1/sessions/${encodeURIComponent(sessionId)}`), {
+      method:"DELETE", keepalive:true,
+    }).catch(()=>{});
+  }
+});
+
+resetLiveOutput();
+setLiveControls(false);
+if(!LIVE_API_BASE){
+  setLiveStatus("Live inference unavailable — no HTTPS API endpoint is configured.");
+}else if(!navigator.mediaDevices?.getDisplayMedia){
+  setLiveStatus("Live capture is unavailable in this browser. Use desktop Chromium over HTTPS.", "error");
+}else{
+  setLiveStatus("Ready. Start will ask you to share a browser tab with audio.");
 }
 
 window.onYouTubeIframeAPIReady = ()=>{
