@@ -147,7 +147,7 @@ footer{border-top:1px solid var(--rule);padding-top:1rem;color:var(--muted);
 
 <section>
   <h2>Demo</h2>
-  <p class="note" style="margin-bottom:.9rem">Choose a backbone and a clip, then press play.</p>
+  <p class="note" style="margin-bottom:.9rem">Originally developed as an offline, training-free mechanism, SCoPE also shows strong potential for streaming use. Choose a backbone and a clip, then press play.</p>
   <div class="tabs" role="tablist" aria-label="Backbone">
     <button class="tab" role="tab" id="t-clipclap" aria-controls="demo-panel"
       aria-selected="true" tabindex="0">CLIP + CLAP</button>
@@ -288,8 +288,8 @@ function draw(){
     `<th class="seg">${i}</th>`).join("")}</tr>`];
   rows.push(...panel("gt", "ground truth", false, 0));
   rows.push(...panel("dense0", "dense cosine · τ = 0.85", true, 0));
-  rows.push(...panel("scope0", "SCoPE · 0 s lookahead", true, 0));
-  rows.push(...panel("scope1", "SCoPE · 1s", true, 1));
+  rows.push(...panel("scope0", "SCoPE", true, 0));
+  rows.push(...panel("scope1", "SCoPE · 1 s latency", true, 1));
   document.getElementById("grid").innerHTML = rows.join("");
 }
 drawClips(); load();
