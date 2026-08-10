@@ -14,7 +14,8 @@ reveals official strong audio/visual annotations alongside frozen CLIP + CLAP
 Dense and prefix-causal SCoPE outputs after each completed second. The outputs
 use the frozen ESC-50 audio and MS-COCO train2017 visual centering references
 and are computed in advance; no model, capture pipeline, or inference service
-runs in the browser.
+runs in the browser. The active 10-second block fills from left to right, while
+the displayed label rows follow the latest completed second.
 
 ## Local preview
 

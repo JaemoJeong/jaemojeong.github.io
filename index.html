@@ -142,23 +142,15 @@ tr.sep th,tr.sep td{border-top:1px solid var(--rule)}
   margin-bottom:.65rem}
 .live-timeline-head h3{margin:0;font-family:var(--serif);font-size:1rem;font-weight:400}
 .live-timeline-head span{color:var(--muted);font: .68rem var(--mono)}
-.live-results{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:.55rem;
-  max-height:30rem;overflow:auto;overscroll-behavior:contain}
-.live-empty{padding:1rem;border:1px dashed var(--rule);color:var(--muted);
-  font: .75rem/1.5 var(--mono)}
-.live-result{border-left:2px solid var(--rule);padding:.55rem .65rem;background:var(--ground)}
-.live-result[data-current="true"]{border-left-color:var(--scope)}
-.live-result-head{display:flex;justify-content:space-between;gap:.75rem;margin-bottom:.4rem;
-  color:var(--muted);font: .66rem/1.35 var(--mono)}
-.live-method{display:grid;grid-template-columns:5.4rem minmax(0,1fr);gap:.5rem;
-  align-items:start;margin-top:.28rem}
-.live-method strong{color:var(--ink);font:600 .72rem/1.5 var(--mono)}
-.live-predictions{display:flex;gap:.3rem;flex-wrap:wrap;min-width:0}
-.live-chip{display:inline-flex;max-width:100%;padding:.12rem .38rem;border:1px solid var(--rule);
-  border-radius:999px;color:var(--ink);font: .68rem/1.45 var(--mono);overflow-wrap:anywhere}
-.live-chip.gt-chip{background:var(--gt);border-color:var(--gt);color:var(--ground)}
-.live-chip.scope-chip{border-color:var(--scope)}
-.live-none{color:var(--muted);font: .68rem/1.5 var(--mono)}
+.replay-gridwrap{overflow-x:auto;overflow-y:visible;
+  border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:.5rem 0}
+table.replay-tl{min-width:max-content}
+table.replay-tl th:first-child{position:sticky;left:0;z-index:2;background:var(--ground)}
+table.replay-tl tr:first-child th{position:sticky;top:0;z-index:3;background:var(--ground)}
+table.replay-tl tr:first-child th:first-child{z-index:4}
+table.replay-tl .cell{width:1.7rem}
+.replay-empty{color:var(--muted);font: .72rem/1.5 var(--mono);text-align:left;
+  padding:.8rem .5rem!important}
 @media (max-width:46rem){
   .live-stats{grid-template-columns:1fr 1fr}
 }
@@ -270,20 +262,23 @@ footer code{font-family:var(--mono);font-size:.74rem;color:var(--ink)}
       <div class="live-stat"><dt>Ground truth</dt><dd>LFAV strong temporal annotations</dd></div>
       <div class="live-stat"><dt>Progress</dt><dd id="replay-progress">0 seconds</dd></div>
     </dl>
-    <p class="window" id="replay-window">No complete one-second segment has arrived yet. Press play to begin.</p>
+    <p class="window" id="replay-window" role="status" aria-live="polite" aria-atomic="true">No complete one-second segment has arrived yet. Press play to begin.</p>
     <div class="live-timeline-head">
-      <h3>Ground truth and predictions as they arrive</h3>
-      <span id="replay-result-count">0 results</span>
+      <h3>Current 10-second window</h3>
+      <span id="replay-result-count">0&ndash;9 s</span>
     </div>
     <p class="legend" aria-label="Replay legend">
       <span><i class="sw" style="background:var(--gt);border-color:var(--gt)"></i>ground truth</span>
-      <span><i class="sw"></i>Dense</span>
-      <span><i class="sw" style="border-color:var(--scope)"></i>SCoPE</span>
+      <span><i class="sw" style="background:var(--hit);border-color:var(--hit)"></i>correct</span>
+      <span><i class="sw" style="background:var(--wrong);border-color:var(--wrong)"></i>false firing</span>
+      <span><i class="sw" style="background:repeating-linear-gradient(135deg,var(--missed) 0 2px,transparent 2px 4px);border-color:var(--missed)"></i>missed</span>
     </p>
-    <ol class="live-results" id="replay-results" aria-live="polite">
-      <li class="live-empty">Press play. Ground truth, Dense, and SCoPE outputs will appear after each completed second.</li>
-    </ol>
-    <p class="privacy">The displayed outputs were computed in advance and replayed at 1× speed. Audio and visual centering use external ESC-50 and MS-COCO statistics, respectively. Seeking changes which cached prefix results are revealed; it does not run new inference.</p>
+    <div class="replay-gridwrap" id="replay-gridwrap" tabindex="0"
+      aria-label="Scrollable replay timeline">
+      <table class="tl replay-tl" id="replay-grid"
+        aria-label="Ground truth, Dense, and SCoPE by modality, label, and second"></table>
+    </div>
+    <p class="privacy">The current 10-second block fills from left to right. Rows are recalculated from labels active in the latest completed second, so false-positive labels may appear or disappear as playback advances. Outputs were computed in advance and replayed at 1× speed; seeking reveals a different cached prefix and does not run new inference. Audio and visual centering use external ESC-50 and MS-COCO statistics, respectively.</p>
   </div>
 </section>
     </div>
@@ -401,7 +396,7 @@ function pollPlayer(){
   try{ absolute = ytPlayer.getCurrentTime(); }catch(_error){ return; }
   if(!Number.isFinite(absolute)) return;
   const m = MEDIA();
-  if(absolute >= m.end - .05){ finishClip(); return; }
+  if(absolute >= m.end){ finishClip(); return; }
 
   // YouTube may begin at a keyframe before startSeconds. That pre-roll is
   // visible, but it never reveals a prediction segment before the clip starts.
@@ -510,36 +505,57 @@ function formatEventLabel(label){
   return label.replace(/_/g, " ");
 }
 
-function predictionsAt(clip, key, branch, second){
-  return clip.labels.filter((_, index)=>clip[key][branch][index][second]);
+function replayVisibleLabels(clip, branch, second){
+  if(second < 0) return [];
+  return clip.labels.map((_, labelIndex)=>
+    ["gt", "dense0", "scope0"]
+      .some(method=>clip[method][branch][labelIndex][second])
+      ? labelIndex : -1).filter(labelIndex=>labelIndex >= 0);
 }
 
-function appendReplayBranch(parent, method, key, branch, clip, second){
-  const row = document.createElement("div");
-  row.className = "live-method";
-
-  const heading = document.createElement("strong");
-  heading.textContent = `${method} · ${branch === "audio" ? "A" : "V"}`;
-  row.appendChild(heading);
-
-  const values = document.createElement("div");
-  values.className = "live-predictions";
-  const labels = predictionsAt(clip, key, branch, second);
-  if(labels.length){
-    for(const label of labels){
-      const chip = document.createElement("span");
-      chip.className = `live-chip${key === "gt" ? " gt-chip" : ""}${key === "scope0" ? " scope-chip" : ""}`;
-      chip.textContent = formatEventLabel(label);
-      values.appendChild(chip);
-    }
-  }else{
-    const none = document.createElement("span");
-    none.className = "live-none";
-    none.textContent = "none";
-    values.appendChild(none);
+function replayCell(bits, truth, second, settled, latestSecond){
+  const unseen = second >= settled;
+  let cls = "", state = "inactive";
+  if(unseen){
+    state = "not observed";
+  }else if(truth === null){
+    if(bits[second]) cls = "on-gt", state = "active";
+  }else if(bits[second] && truth[second]){
+    cls = "hit", state = "correct";
+  }else if(bits[second]){
+    cls = "miss", state = "false firing";
+  }else if(truth[second]){
+    cls = "missed", state = "missed";
   }
-  row.appendChild(values);
-  parent.appendChild(row);
+  const current = !unseen && second === latestSecond;
+  return `<td class="${current ? "now" : ""}${unseen ? " future" : ""}" ` +
+         `aria-label="segment ${second}: ${state}">` +
+         `<div class="cell ${cls}" aria-hidden="true"></div></td>`;
+}
+
+function replayLine(clip, key, branch, labelIndex, seconds, settled, latestSecond){
+  const bits = clip[key][branch][labelIndex];
+  const truth = key === "gt" ? null : clip.gt[branch][labelIndex];
+  const label = formatEventLabel(clip.labels[labelIndex]);
+  return `<tr><th scope="row">${label}</th>` +
+         seconds.map(second=>replayCell(bits, truth, second, settled, latestSecond)).join("") +
+         `</tr>`;
+}
+
+function replayPanel(clip, key, title, separated, seconds, shown, settled, latestSecond){
+  const rows = [`<tr class="${separated ? "sep" : ""}"><th class="group">${title}</th>` +
+                `<td class="group" colspan="${seconds.length}"></td></tr>`];
+  for(const branch of ["audio", "visual"]){
+    if(!shown[branch].length) continue;
+    rows.push(`<tr><th class="branch">${branch}</th>` +
+              `<td colspan="${seconds.length}"></td></tr>`);
+    for(const labelIndex of shown[branch]){
+      rows.push(replayLine(
+        clip, key, branch, labelIndex, seconds, settled, latestSecond,
+      ));
+    }
+  }
+  return rows;
 }
 
 let replayRenderKey = "";
@@ -550,53 +566,52 @@ function drawReplay(){
   const progress = document.getElementById("replay-progress");
   const status = document.getElementById("replay-window");
   const count = document.getElementById("replay-result-count");
-  const results = document.getElementById("replay-results");
-
-  progress.textContent = `${settled} / ${total} seconds`;
-  count.textContent = `${settled} ${settled === 1 ? "result" : "results"}`;
-  status.innerHTML = clipEnded
-    ? `Replay finished &middot; ground truth and cached causal outputs for segments <b>0&ndash;${total - 1}</b> have been revealed.`
-    : settled === 0
-      ? `No complete one-second segment has arrived yet. Press play to begin.`
-      : `t = <b>${relativeTime.toFixed(1)}s</b> &middot; completed segments
-         <b>0&ndash;${settled - 1}</b> have arrived. Cached results for later segments remain hidden.`;
-
-  const renderKey = `${cur}:${settled}`;
+  const grid = document.getElementById("replay-grid");
+  const latestSecond = settled - 1;
+  const windowStart = latestSecond < 0 ? 0 : Math.floor(latestSecond / 10) * 10;
+  const windowEnd = Math.min(windowStart + 10, total);
+  const seconds = [...Array(windowEnd - windowStart)].map((_, index)=>windowStart + index);
+  const renderKey = `${cur}:${settled}:${clipEnded}`;
   if(renderKey === replayRenderKey) return;
   replayRenderKey = renderKey;
-  results.replaceChildren();
 
+  progress.textContent = `${settled} / ${total} seconds`;
+  count.textContent = `${windowStart}–${windowEnd - 1} s`;
+  status.innerHTML = clipEnded
+    ? `Replay finished &middot; final block <b>${windowStart}&ndash;${windowEnd - 1}</b> is settled.`
+    : settled === 0
+      ? `No complete one-second segment has arrived yet. Press play to begin.`
+      : `t = <b>${relativeTime.toFixed(1)}s</b> &middot; segment <b>${latestSecond}</b> has arrived.
+         The <b>${windowStart}&ndash;${windowEnd - 1}</b> block fills left to right; rows follow labels active at segment ${latestSecond}.`;
+
+  const rows = [`<tr><th scope="col">label</th>` +
+                seconds.map(second=>`<th class="seg" scope="col">${second}</th>`).join("") +
+                `</tr>`];
   if(settled === 0){
-    const empty = document.createElement("li");
-    empty.className = "live-empty";
-    empty.textContent = "Press play. Ground truth, Dense, and SCoPE outputs will appear after each completed second.";
-    results.appendChild(empty);
-    return;
+    rows.push(`<tr><th></th><td class="replay-empty" colspan="${seconds.length}">` +
+              `Press play. The first completed second will reveal its labels and cells.</td></tr>`);
+  }else{
+    const shown = {
+      audio: replayVisibleLabels(clip, "audio", latestSecond),
+      visual: replayVisibleLabels(clip, "visual", latestSecond),
+    };
+    if(!shown.audio.length && !shown.visual.length){
+      rows.push(`<tr><th></th><td class="replay-empty" colspan="${seconds.length}">` +
+                `No active ground-truth or predicted labels at segment ${latestSecond}.</td></tr>`);
+    }else{
+      rows.push(...replayPanel(
+        clip, "gt", "ground truth", false, seconds, shown, settled, latestSecond,
+      ));
+      rows.push(...replayPanel(
+        clip, "dense0", "dense cosine · τ = 0.85", true,
+        seconds, shown, settled, latestSecond,
+      ));
+      rows.push(...replayPanel(
+        clip, "scope0", "SCoPE", true, seconds, shown, settled, latestSecond,
+      ));
+    }
   }
-
-  for(let second = 0; second < settled; second += 1){
-    const item = document.createElement("li");
-    item.className = "live-result";
-    item.dataset.current = String(second === settled - 1);
-
-    const head = document.createElement("div");
-    head.className = "live-result-head";
-    const segment = document.createElement("span");
-    segment.textContent = `segment ${second}`;
-    const interval = document.createElement("span");
-    interval.textContent = `${second}–${second + 1} s`;
-    head.append(segment, interval);
-    item.appendChild(head);
-
-    appendReplayBranch(item, "Ground truth", "gt", "audio", clip, second);
-    appendReplayBranch(item, "Ground truth", "gt", "visual", clip, second);
-    appendReplayBranch(item, "Dense", "dense0", "audio", clip, second);
-    appendReplayBranch(item, "Dense", "dense0", "visual", clip, second);
-    appendReplayBranch(item, "SCoPE", "scope0", "audio", clip, second);
-    appendReplayBranch(item, "SCoPE", "scope0", "visual", clip, second);
-    results.appendChild(item);
-  }
-  results.scrollTop = results.scrollHeight;
+  grid.innerHTML = rows.join("");
 }
 function setDemoMode(mode, focus=false){
   modeSelection[demoMode] = cur;
