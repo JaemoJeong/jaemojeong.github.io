@@ -1,12 +1,20 @@
 # SCoPE: Training-Free Audio-Visual Event Perception via Sparse Cross-Modal Prior Exchange
 
-Interactive demo for training-free, causal audio-visual event parsing on the LLP test split.
+**Demo:** <https://jaemojeong.github.io/>
 
-**Live demo:** <https://jaemojeong.github.io/>
+The default curated tab presents eight LLP examples with frozen Dense and
+SCoPE predictions. Videos are streamed through YouTube's privacy-enhanced
+embed; this repository does not distribute the source media. The two paper
+figures, prediction payload, styles, and JavaScript are embedded in
+`index.html`.
 
-The site is a single self-contained `index.html`: nine video examples, two
-paper figures, audio, predictions, styles, and JavaScript are embedded. No
-model runs in the browser and no external asset is fetched.
+The separate **Streaming replay** tab is an exploratory causal adaptation that
+was not evaluated in the paper. It uses three longer LFAV test videos and
+reveals official strong audio/visual annotations alongside frozen CLIP + CLAP
+Dense and prefix-causal SCoPE outputs after each completed second. The outputs
+use the frozen ESC-50 audio and MS-COCO train2017 visual centering references
+and are computed in advance; no model, capture pipeline, or inference service
+runs in the browser.
 
 ## Local preview
 
@@ -16,8 +24,7 @@ python3 -m http.server 8765
 
 Then open <http://127.0.0.1:8765/>.
 
-## Data and media
-
-Predictions are precomputed from frozen SCoPE experiment artifacts. Video
-excerpts come from the LLP test split and originate from AudioSet/YouTube. Media
-rights remain with their respective owners.
+The replay supports only the three precomputed LFAV examples included in the
+page data. It does not accept arbitrary videos or claim live inference. Source
+videos remain on YouTube and are loaded through the privacy-enhanced embed; raw
+LFAV media is not redistributed by this repository.
