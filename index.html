@@ -49,13 +49,13 @@ a.project-link:focus-visible{outline:2px solid var(--scope);outline-offset:2px}
 .project-link.disabled{color:var(--muted);cursor:default}
 h2{font-family:var(--serif);font-weight:400;font-size:1.3rem;margin:0 0 .3rem}
 .note{margin:0;color:var(--muted);font-size:.88rem;max-width:47em}
-.mode-tabs{display:flex;gap:.45rem;border-bottom:1px solid var(--rule);margin-top:-.8rem}
+.mode-tabs{display:flex;gap:.45rem;border-bottom:1px solid var(--rule);margin:.8rem 0 1rem}
 .mode-tab{font:inherit;font-family:var(--mono);font-size:.86rem;cursor:pointer;
   background:transparent;color:var(--muted);border:0;border-bottom:2px solid transparent;
   padding:.7rem 1rem;margin-bottom:-1px}
 .mode-tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--scope)}
 .mode-tab:focus-visible{outline:2px solid var(--scope);outline-offset:2px}
-.mode-panel{display:flex;flex-direction:column;gap:2.6rem}
+.mode-panel{display:block}
 .mode-panel[hidden]{display:none}
 .figure-stack{display:flex;flex-direction:column;gap:1.35rem;margin-top:1rem}
 .paper-figure{margin:0}
@@ -116,7 +116,7 @@ td.future .cell{border-style:dashed;opacity:.4}
 td.now .cell{box-shadow:0 0 0 2px var(--scope)}
 .group{color:var(--ink);font-size:.7rem;letter-spacing:.09em;
   text-transform:uppercase;padding-top:.85rem;padding-bottom:.2rem}
-.branch{color:var(--muted);font-size:.66rem;letter-spacing:.06em;
+table.tl th.branch{color:var(--ink);font-size:.66rem;font-weight:700;letter-spacing:.06em;
   text-transform:uppercase;padding-top:.3rem}
 tr.sep th,tr.sep td{border-top:1px solid var(--rule)}
 .legend{display:flex;gap:1rem;flex-wrap:wrap;font-family:var(--mono);
@@ -180,14 +180,6 @@ footer code{font-family:var(--mono);font-size:.74rem;color:var(--ink)}
   </nav>
 </header>
 
-<nav class="mode-tabs" role="tablist" aria-label="Demo mode">
-  <button class="mode-tab" type="button" role="tab" id="mode-curated"
-    aria-controls="curated-panel" aria-selected="true" tabindex="0">Curated demo</button>
-  <button class="mode-tab" type="button" role="tab" id="mode-replay"
-    aria-controls="replay-panel" aria-selected="false" tabindex="-1">Streaming replay</button>
-</nav>
-
-<div class="mode-panel" id="curated-panel" role="tabpanel" aria-labelledby="mode-curated">
 <section aria-labelledby="overview-title">
   <h2 id="overview-title">Overview</h2>
   <div class="figure-stack">
@@ -208,36 +200,43 @@ footer code{font-family:var(--mono);font-size:.74rem;color:var(--ink)}
   </div>
 </section>
 
-<section>
-  <h2>Demo</h2>
-  <p class="note" style="margin-bottom:.9rem">Originally developed as an offline, training-free mechanism, SCoPE also shows strong potential for streaming use. Choose a backbone and a clip, then press play.</p>
-  <div class="tabs" role="tablist" aria-label="Backbone">
-    <button class="tab" role="tab" id="t-clipclap" aria-controls="curated-output"
-      aria-selected="false" tabindex="-1">CLIP + CLAP</button>
-    <button class="tab" role="tab" id="t-languagebind" aria-controls="curated-output"
-      aria-selected="true" tabindex="0">LanguageBind</button>
+<section aria-labelledby="demo-title">
+  <h2 id="demo-title">Demo</h2>
+  <nav class="mode-tabs" role="tablist" aria-label="Demo mode">
+    <button class="mode-tab" type="button" role="tab" id="mode-curated"
+      aria-controls="curated-panel" aria-selected="true" tabindex="0">Curated demo</button>
+    <button class="mode-tab" type="button" role="tab" id="mode-replay"
+      aria-controls="replay-panel" aria-selected="false" tabindex="-1">Streaming replay</button>
+  </nav>
+
+  <div class="mode-panel" id="curated-panel" role="tabpanel" aria-labelledby="mode-curated">
+    <p class="note" style="margin-bottom:.9rem">Originally developed as an offline, training-free mechanism, SCoPE also shows strong potential for streaming use. Choose a backbone and a clip, then press play.</p>
+    <div class="tabs" role="tablist" aria-label="Backbone">
+      <button class="tab" role="tab" id="t-clipclap" aria-controls="curated-output"
+        aria-selected="false" tabindex="-1">CLIP + CLAP</button>
+      <button class="tab" role="tab" id="t-languagebind" aria-controls="curated-output"
+        aria-selected="true" tabindex="0">LanguageBind</button>
+    </div>
+    <ul class="clips" id="clips"></ul>
   </div>
-  <ul class="clips" id="clips"></ul>
-</section>
 
-</div>
-
-<div class="mode-panel" id="replay-panel" role="tabpanel" aria-labelledby="mode-replay" hidden>
-  <section class="live-shell" aria-labelledby="replay-title">
+  <div class="mode-panel" id="replay-panel" role="tabpanel" aria-labelledby="mode-replay" hidden>
+    <div class="live-shell" aria-labelledby="replay-title">
     <div class="live-heading">
       <p class="live-badge">CLIP + CLAP · cached causal output</p>
       <h2 id="replay-title">Streaming replay</h2>
       <p class="live-disclaimer">Exploratory streaming adaptation — not evaluated in the paper.</p>
-      <p class="note">Precomputed causal replay on LFAV. Official audio and visual annotations, Dense, and SCoPE outputs are revealed after each observed second; no model runs in the browser.</p>
+      <p class="note">Precomputed causal replay on LFAV. Official audio and visual annotations, Dense, zero-latency SCoPE, and one-second-latency SCoPE are revealed as their segments settle; no model runs in the browser.</p>
     </div>
-    <ul class="clips" id="replay-clips" aria-label="Replay examples"></ul>
-  </section>
-</div>
+      <ul class="clips" id="replay-clips" aria-label="Replay examples"></ul>
+    </div>
+  </div>
+</section>
 
 <section class="stage" id="demo-panel" aria-label="Selected video and predictions">
   <div class="media">
     <div class="player-shell">
-      <div id="yt-player" aria-label="Selected audio-visual example" aria-describedby="vcap"></div>
+      <div id="yt-player" role="group" aria-label="Selected audio-visual example" aria-describedby="vcap"></div>
       <p class="watch-fallback" id="watch-fallback" hidden>
         This clip cannot be played here. <a id="watch-link" target="_blank" rel="noopener">Watch it on YouTube.</a>
       </p>
@@ -264,8 +263,8 @@ footer code{font-family:var(--mono);font-size:.74rem;color:var(--ink)}
     </dl>
     <p class="window" id="replay-window" role="status" aria-live="polite" aria-atomic="true">No complete one-second segment has arrived yet. Press play to begin.</p>
     <div class="live-timeline-head">
-      <h3>Current 10-second window</h3>
-      <span id="replay-result-count">0&ndash;9 s</span>
+      <h3>Continuous timeline</h3>
+      <span id="replay-result-count">0 s observed</span>
     </div>
     <p class="legend" aria-label="Replay legend">
       <span><i class="sw" style="background:var(--gt);border-color:var(--gt)"></i>ground truth</span>
@@ -276,14 +275,11 @@ footer code{font-family:var(--mono);font-size:.74rem;color:var(--ink)}
     <div class="replay-gridwrap" id="replay-gridwrap" tabindex="0"
       aria-label="Scrollable replay timeline">
       <table class="tl replay-tl" id="replay-grid"
-        aria-label="Ground truth, Dense, and SCoPE by modality, label, and second"></table>
+        aria-label="Ground truth, Dense, zero-latency SCoPE, and one-second-latency SCoPE by modality, label, and second"></table>
     </div>
-    <p class="privacy">The current 10-second block fills from left to right. Rows are recalculated from labels active in the latest completed second, so false-positive labels may appear or disappear as playback advances. Outputs were computed in advance and replayed at 1× speed; seeking reveals a different cached prefix and does not run new inference. Audio and visual centering use external ESC-50 and MS-COCO statistics, respectively.</p>
+    <p class="privacy">The full timeline fills continuously from left to right. Each method shows only its current predictions plus the current ground-truth labels, so its rows may appear or disappear every second. The one-second-latency SCoPE row settles after the following second arrives; the end signal closes its final boundary. Outputs were computed in advance and replayed at 1× speed; seeking reveals a different cached prefix and does not run new inference. Audio and visual centering use external ESC-50 and MS-COCO statistics, respectively.</p>
   </div>
 </section>
-    </div>
-  </section>
-</div>
 
 <footer>
   <p class="checkpoints"><strong>Backbone checkpoints.</strong><br>
@@ -335,6 +331,10 @@ function selectClipFromButton(e){
   const b = e.target.closest(".clip"); if(!b) return;
   cur = b.dataset.k; modeSelection[demoMode] = cur;
   resetClipState(); drawClips(); load();
+  const activeList = demoMode === "replay" ? replayClipsEl : clipsEl;
+  const selected = [...activeList.querySelectorAll(".clip")]
+    .find(button=>button.dataset.k === cur);
+  if(selected) selected.focus();
 }
 clipsEl.addEventListener("click", selectClipFromButton);
 replayClipsEl.addEventListener("click", selectClipFromButton);
@@ -453,21 +453,23 @@ function draw(){
       : `t = <b>${relativeTime.toFixed(1)}s</b> &middot; completed segments
          <b>0&ndash;${arrived-1}</b> have arrived. Nothing later is shown.`;
 
-  const line = (bits, name, truth, delay) =>
+  const line = (bits, name, truth, delay, method, branch) =>
     `<tr><th>${name}</th>` + [...Array(10)].map((_,i)=>{
       const lastSettled = clipEnded ? 9 : arrived - 1 - (delay || 0);
       const unseen = i > lastSettled;
       let cls = "";
+      let state = unseen ? "not observed" : "inactive";
       if(!unseen){
         if(truth){
-          if(bits[i] && truth[i]) cls = "hit";
-          else if(bits[i])        cls = "miss";
-          else if(truth[i])       cls = "missed";
-        } else if(bits[i]) cls = "on-gt";
+          if(bits[i] && truth[i]) { cls = "hit"; state = "correct"; }
+          else if(bits[i])        { cls = "miss"; state = "false firing"; }
+          else if(truth[i])       { cls = "missed"; state = "missed"; }
+        } else if(bits[i])        { cls = "on-gt"; state = "active"; }
       }
       const head = lastSettled >= 0 && i === lastSettled;
-      return `<td class="${head?"now":""}${unseen?" future":""}">` +
-             `<div class="cell ${cls}"></div></td>`;
+      return `<td class="${head?"now":""}${unseen?" future":""}" ` +
+             `aria-label="${method}, ${branch}, ${name}, segment ${i}: ${state}">` +
+             `<div class="cell ${cls}" aria-hidden="true"></div></td>`;
     }).join("") + `</tr>`;
 
   const shown = {};
@@ -485,7 +487,7 @@ function draw(){
       shown[br].forEach(li=>{
         const bits = c[key][br][li];
         out.push(line(bits, c.labels[li].replace(/_/g," "),
-                      key === "gt" ? null : c.gt[br][li], delay));
+                      key === "gt" ? null : c.gt[br][li], delay, title, br));
       });
     }
     return out;
@@ -505,48 +507,78 @@ function formatEventLabel(label){
   return label.replace(/_/g, " ");
 }
 
-function replayVisibleLabels(clip, branch, second){
-  if(second < 0) return [];
-  return clip.labels.map((_, labelIndex)=>
-    ["gt", "dense0", "scope0"]
-      .some(method=>clip[method][branch][labelIndex][second])
-      ? labelIndex : -1).filter(labelIndex=>labelIndex >= 0);
+function replayPrediction(clip, key, branch, labelIndex, second){
+  const sourceKey = key === "scope1" ? "scope0" : key;
+  const bits = clip[sourceKey][branch][labelIndex];
+  if(key !== "scope1") return Boolean(bits[second]);
+  const left = second > 0 && bits[second - 1];
+  const right = second + 1 < bits.length && bits[second + 1];
+  return Boolean(bits[second] && (left || right));
 }
 
-function replayCell(bits, truth, second, settled, latestSecond){
+function replayVisibleLabels(clip, key, branch, second){
+  if(second < 0) return [];
+  return clip.labels.map((_, labelIndex)=>{
+    const truth = Boolean(clip.gt[branch][labelIndex][second]);
+    const prediction = key === "gt"
+      ? truth
+      : replayPrediction(clip, key, branch, labelIndex, second);
+    return truth || prediction ? labelIndex : -1;
+  }).filter(labelIndex=>labelIndex >= 0);
+}
+
+function replayCell(clip, key, branch, labelIndex, second, settled, latestSecond){
   const unseen = second >= settled;
   let cls = "", state = "inactive";
   if(unseen){
     state = "not observed";
-  }else if(truth === null){
-    if(bits[second]) cls = "on-gt", state = "active";
-  }else if(bits[second] && truth[second]){
-    cls = "hit", state = "correct";
-  }else if(bits[second]){
-    cls = "miss", state = "false firing";
-  }else if(truth[second]){
-    cls = "missed", state = "missed";
+  }else{
+    const prediction = replayPrediction(clip, key, branch, labelIndex, second);
+    const truth = Boolean(clip.gt[branch][labelIndex][second]);
+    if(key === "gt" && prediction){
+      cls = "on-gt", state = "active";
+    }else if(prediction && truth){
+      cls = "hit", state = "correct";
+    }else if(prediction){
+      cls = "miss", state = "false firing";
+    }else if(truth){
+      cls = "missed", state = "missed";
+    }
   }
   const current = !unseen && second === latestSecond;
+  const method = {
+    gt: "ground truth",
+    dense0: "dense cosine",
+    scope0: "SCoPE",
+    scope1: "SCoPE one-second latency",
+  }[key];
+  const label = formatEventLabel(clip.labels[labelIndex]);
   return `<td class="${current ? "now" : ""}${unseen ? " future" : ""}" ` +
-         `aria-label="segment ${second}: ${state}">` +
+         `aria-label="${method}, ${branch}, ${label}, segment ${second}: ${state}">` +
          `<div class="cell ${cls}" aria-hidden="true"></div></td>`;
 }
 
 function replayLine(clip, key, branch, labelIndex, seconds, settled, latestSecond){
-  const bits = clip[key][branch][labelIndex];
-  const truth = key === "gt" ? null : clip.gt[branch][labelIndex];
   const label = formatEventLabel(clip.labels[labelIndex]);
   return `<tr><th scope="row">${label}</th>` +
-         seconds.map(second=>replayCell(bits, truth, second, settled, latestSecond)).join("") +
+         seconds.map(second=>replayCell(
+           clip, key, branch, labelIndex, second, settled, latestSecond,
+         )).join("") +
          `</tr>`;
 }
 
-function replayPanel(clip, key, title, separated, seconds, shown, settled, latestSecond){
+function replayPanel(clip, key, title, separated, seconds, settled){
+  const latestSecond = settled - 1;
+  const shown = {
+    audio: replayVisibleLabels(clip, key, "audio", latestSecond),
+    visual: replayVisibleLabels(clip, key, "visual", latestSecond),
+  };
   const rows = [`<tr class="${separated ? "sep" : ""}"><th class="group">${title}</th>` +
                 `<td class="group" colspan="${seconds.length}"></td></tr>`];
+  let visibleCount = 0;
   for(const branch of ["audio", "visual"]){
     if(!shown[branch].length) continue;
+    visibleCount += shown[branch].length;
     rows.push(`<tr><th class="branch">${branch}</th>` +
               `<td colspan="${seconds.length}"></td></tr>`);
     for(const labelIndex of shown[branch]){
@@ -554,6 +586,13 @@ function replayPanel(clip, key, title, separated, seconds, shown, settled, lates
         clip, key, branch, labelIndex, seconds, settled, latestSecond,
       ));
     }
+  }
+  if(!visibleCount){
+    const message = latestSecond < 0
+      ? "Waiting for a settled segment."
+      : `No active or missed labels at segment ${latestSecond}.`;
+    rows.push(`<tr><th></th><td class="replay-empty" colspan="${seconds.length}">` +
+              `${message}</td></tr>`);
   }
   return rows;
 }
@@ -567,51 +606,56 @@ function drawReplay(){
   const status = document.getElementById("replay-window");
   const count = document.getElementById("replay-result-count");
   const grid = document.getElementById("replay-grid");
+  const gridwrap = document.getElementById("replay-gridwrap");
   const latestSecond = settled - 1;
-  const windowStart = latestSecond < 0 ? 0 : Math.floor(latestSecond / 10) * 10;
-  const windowEnd = Math.min(windowStart + 10, total);
-  const seconds = [...Array(windowEnd - windowStart)].map((_, index)=>windowStart + index);
+  const scope1Settled = clipEnded ? total : Math.max(0, settled - 1);
+  const scope1Latest = scope1Settled - 1;
+  const seconds = [...Array(total)].map((_, second)=>second);
   const renderKey = `${cur}:${settled}:${clipEnded}`;
   if(renderKey === replayRenderKey) return;
   replayRenderKey = renderKey;
 
   progress.textContent = `${settled} / ${total} seconds`;
-  count.textContent = `${windowStart}–${windowEnd - 1} s`;
+  count.textContent = settled === 0 ? "0 s observed" : `0–${latestSecond} s observed`;
   status.innerHTML = clipEnded
-    ? `Replay finished &middot; final block <b>${windowStart}&ndash;${windowEnd - 1}</b> is settled.`
+    ? `Replay finished &middot; all <b>${total}</b> segments, including the final one-second-latency boundary, are settled.`
     : settled === 0
       ? `No complete one-second segment has arrived yet. Press play to begin.`
       : `t = <b>${relativeTime.toFixed(1)}s</b> &middot; segment <b>${latestSecond}</b> has arrived.
-         The <b>${windowStart}&ndash;${windowEnd - 1}</b> block fills left to right; rows follow labels active at segment ${latestSecond}.`;
+         Zero-latency rows are settled through <b>${latestSecond}</b>; one-second-latency SCoPE is settled through <b>${scope1Latest < 0 ? "none yet" : scope1Latest}</b>.`;
 
   const rows = [`<tr><th scope="col">label</th>` +
-                seconds.map(second=>`<th class="seg" scope="col">${second}</th>`).join("") +
+                seconds.map(second=>`<th class="seg" scope="col" data-second="${second}">${second}</th>`).join("") +
                 `</tr>`];
   if(settled === 0){
     rows.push(`<tr><th></th><td class="replay-empty" colspan="${seconds.length}">` +
               `Press play. The first completed second will reveal its labels and cells.</td></tr>`);
   }else{
-    const shown = {
-      audio: replayVisibleLabels(clip, "audio", latestSecond),
-      visual: replayVisibleLabels(clip, "visual", latestSecond),
-    };
-    if(!shown.audio.length && !shown.visual.length){
-      rows.push(`<tr><th></th><td class="replay-empty" colspan="${seconds.length}">` +
-                `No active ground-truth or predicted labels at segment ${latestSecond}.</td></tr>`);
-    }else{
-      rows.push(...replayPanel(
-        clip, "gt", "ground truth", false, seconds, shown, settled, latestSecond,
-      ));
-      rows.push(...replayPanel(
-        clip, "dense0", "dense cosine · τ = 0.85", true,
-        seconds, shown, settled, latestSecond,
-      ));
-      rows.push(...replayPanel(
-        clip, "scope0", "SCoPE", true, seconds, shown, settled, latestSecond,
-      ));
-    }
+    rows.push(...replayPanel(
+      clip, "gt", "ground truth", false, seconds, settled,
+    ));
+    rows.push(...replayPanel(
+      clip, "dense0", "dense cosine · τ = 0.85", true, seconds, settled,
+    ));
+    rows.push(...replayPanel(
+      clip, "scope0", "SCoPE", true, seconds, settled,
+    ));
+    rows.push(...replayPanel(
+      clip, "scope1", "SCoPE · 1 s latency", true, seconds, scope1Settled,
+    ));
   }
   grid.innerHTML = rows.join("");
+  if(latestSecond < 0){
+    gridwrap.scrollLeft = 0;
+  }else{
+    const currentHeader = grid.querySelector(`[data-second="${latestSecond}"]`);
+    if(currentHeader){
+      const wrapBox = gridwrap.getBoundingClientRect();
+      const headerBox = currentHeader.getBoundingClientRect();
+      const contentRight = headerBox.right - wrapBox.left + gridwrap.scrollLeft;
+      gridwrap.scrollLeft = Math.max(0, contentRight - gridwrap.clientWidth + 8);
+    }
+  }
 }
 function setDemoMode(mode, focus=false){
   modeSelection[demoMode] = cur;

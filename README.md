@@ -11,11 +11,12 @@ figures, prediction payload, styles, and JavaScript are embedded in
 The separate **Streaming replay** tab is an exploratory causal adaptation that
 was not evaluated in the paper. It uses three longer LFAV test videos and
 reveals official strong audio/visual annotations alongside frozen CLIP + CLAP
-Dense and prefix-causal SCoPE outputs after each completed second. The outputs
-use the frozen ESC-50 audio and MS-COCO train2017 visual centering references
-and are computed in advance; no model, capture pipeline, or inference service
-runs in the browser. The active 10-second block fills from left to right, while
-the displayed label rows follow the latest completed second.
+Dense, prefix-causal SCoPE, and its one-second-latency readout. The outputs use
+the frozen ESC-50 audio and MS-COCO train2017 visual centering references and
+are computed in advance; no model, capture pipeline, or inference service runs
+in the browser. One continuous full-clip timeline fills from left to right.
+Each method keeps only its own current predictions and current ground-truth
+labels, so irrelevant rows disappear as playback advances.
 
 ## Local preview
 
