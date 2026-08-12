@@ -63,21 +63,27 @@ a.project-link:focus-visible{outline:2px solid var(--scope);outline-offset:2px}
 .project-link.disabled{color:var(--muted);cursor:default}
 h2{font-family:var(--serif);font-weight:400;font-size:1.3rem;margin:0 0 .3rem}
 .note{margin:0;color:var(--muted);font-size:.88rem;max-width:47em}
-.mode-tabs{display:flex;gap:.45rem;border-bottom:1px solid var(--rule);margin:.8rem 0 1rem}
+.demo-toolbar{display:flex;align-items:center;justify-content:space-between;gap:1rem;
+  margin:.8rem 0 1rem;padding-bottom:.8rem;border-bottom:1px solid var(--rule)}
+.mode-tabs{display:inline-flex;gap:.2rem;margin:0;padding:.22rem;border:1px solid var(--rule);
+  border-radius:4px;background:color-mix(in srgb,var(--ink) 4%,var(--ground))}
 .mode-tab{font:inherit;font-family:var(--mono);font-size:.86rem;cursor:pointer;
-  background:transparent;color:var(--muted);border:0;border-bottom:2px solid transparent;
-  padding:.7rem 1rem;margin-bottom:-1px}
-.mode-tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--scope)}
+  background:transparent;color:var(--muted);border:1px solid transparent;border-radius:2px;
+  padding:.58rem .9rem}
+.mode-tab:hover{color:var(--ink)}
+.mode-tab[aria-selected="true"]{background:var(--ink);color:var(--ground);border-color:var(--ink)}
 .mode-tab:focus-visible{outline:2px solid var(--scope);outline-offset:2px}
 .mode-panel{display:block}
 .mode-panel[hidden]{display:none}
-.demo-actions{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin:.8rem 0}
+.demo-actions{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin:0}
 .play-example{display:inline-flex;align-items:center;justify-content:center;min-height:2.75rem;
-  padding:.62rem 1rem;border:1px solid var(--ink);border-radius:2px;background:transparent;
-  color:var(--ink);font:600 .86rem var(--mono);cursor:pointer}
-.play-example:hover{background:var(--ink);border-color:var(--ink);color:var(--ground)}
+  gap:.52rem;padding:.62rem 1.05rem;border:1px solid var(--ink);border-radius:999px;
+  background:var(--ink);color:var(--ground);font:600 .86rem var(--mono);cursor:pointer;
+  transition:background-color .16s ease,border-color .16s ease,transform .16s ease}
+.play-example:hover{background:var(--scope);border-color:var(--scope);transform:translateY(-1px)}
 .play-example:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
-.play-example:disabled{cursor:wait;opacity:.55}
+.play-example:disabled{cursor:wait;opacity:.68}
+.play-example:disabled:hover{background:var(--ink);border-color:var(--ink);transform:none}
 .scroll-hint{display:none;margin:.35rem 0 0;color:var(--muted);font: .7rem var(--mono)}
 .figure-stack{display:flex;flex-direction:column;gap:1.35rem;margin-top:1rem}
 .paper-figure{margin:0}
@@ -86,11 +92,16 @@ h2{font-family:var(--serif);font-weight:400;font-size:1.3rem;margin:0 0 .3rem}
 .figure-scroll{overflow-x:auto;background:#fff;border:1px solid var(--rule);
   border-radius:2px;overscroll-behavior-inline:contain}
 .figure-scroll img{display:block;width:100%;height:auto}
-.tabs{display:flex;gap:.4rem;border-bottom:1px solid var(--rule);margin-bottom:1rem}
+.backbone-control{display:flex;align-items:center;gap:.65rem;flex-wrap:wrap;margin-bottom:1rem}
+.control-label{color:var(--muted);font:600 .68rem var(--mono);letter-spacing:.08em;
+  text-transform:uppercase}
+.tabs{display:flex;gap:.35rem}
 .tab{font:inherit;font-family:var(--mono);font-size:.8rem;cursor:pointer;
-  background:transparent;color:var(--muted);border:0;border-bottom:2px solid transparent;
-  padding:.5rem .9rem;margin-bottom:-1px}
-.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--scope)}
+  background:transparent;color:var(--muted);border:1px solid var(--rule);border-radius:999px;
+  padding:.38rem .75rem}
+.tab:hover{border-color:var(--muted);color:var(--ink)}
+.tab[aria-selected="true"]{color:var(--scope);border-color:var(--scope);
+  background:color-mix(in srgb,var(--scope) 7%,var(--ground))}
 .tab:focus-visible{outline:2px solid var(--scope);outline-offset:2px}
 .clips{display:flex;gap:.6rem;flex-wrap:wrap;padding:0;margin:0;list-style:none}
 .clip{background:var(--panel);border:1px solid var(--rule);border-radius:2px;min-height:2.75rem;
@@ -162,6 +173,12 @@ table.replay-tl .cell{width:1.7rem}
 .replay-empty{color:var(--muted);font: .72rem/1.5 var(--mono);text-align:left;
   padding:.8rem .5rem!important}
 @media (max-width:46rem){.scroll-hint{display:block}}
+@media (max-width:38rem){
+  .demo-toolbar{align-items:stretch;flex-direction:column}
+  .mode-tabs{display:grid;grid-template-columns:1fr 1fr}
+  .demo-actions{justify-content:flex-start}
+  .play-example{width:100%}
+}
 footer{border-top:1px solid var(--rule);padding-top:1rem;color:var(--muted);
   font-size:.75rem}
 footer p{margin:0}
@@ -217,35 +234,43 @@ footer code{font-family:var(--mono);font-size:.74rem;color:var(--ink)}
 
 <section id="demo-section" aria-labelledby="demo-title">
   <h2 id="demo-title">Demo</h2>
-  <nav class="mode-tabs" role="tablist" aria-label="Demo mode">
-    <button class="mode-tab" type="button" role="tab" id="mode-curated"
-      aria-controls="curated-panel" aria-selected="true" tabindex="0">Curated demo</button>
-    <button class="mode-tab" type="button" role="tab" id="mode-replay"
-      aria-controls="replay-panel" aria-selected="false" tabindex="-1">Streaming replay</button>
-  </nav>
-
-  <div class="demo-actions">
-    <button class="play-example" id="play-example" type="button"
-      disabled>Play example</button>
+  <div class="demo-toolbar">
+    <nav class="mode-tabs" role="tablist" aria-label="Demo mode">
+      <button class="mode-tab" type="button" role="tab" id="mode-curated"
+        aria-controls="curated-panel" aria-selected="true" tabindex="0">Curated demo</button>
+      <button class="mode-tab" type="button" role="tab" id="mode-replay"
+        aria-controls="replay-panel" aria-selected="false" tabindex="-1">Streaming replay</button>
+    </nav>
+    <div class="demo-actions">
+      <button class="play-example" id="play-example" type="button" disabled>
+        <i class="fa-solid fa-play" aria-hidden="true"></i><span>Play example</span>
+      </button>
+    </div>
   </div>
 
   <div class="mode-panel" id="curated-panel" role="tabpanel" aria-labelledby="mode-curated">
-    <div class="tabs curated-tabs" role="tablist" aria-label="Curated-demo backbone">
-      <button class="tab" role="tab" id="t-clipclap" aria-controls="curated-output"
-        aria-selected="false" tabindex="-1">CLIP + CLAP</button>
-      <button class="tab" role="tab" id="t-languagebind" aria-controls="curated-output"
-        aria-selected="true" tabindex="0">LanguageBind</button>
+    <div class="backbone-control">
+      <span class="control-label" id="curated-backbone-label">Backbone</span>
+      <div class="tabs curated-tabs" role="tablist" aria-labelledby="curated-backbone-label">
+        <button class="tab" role="tab" id="t-clipclap" aria-controls="curated-output"
+          aria-selected="false" tabindex="-1">CLIP + CLAP</button>
+        <button class="tab" role="tab" id="t-languagebind" aria-controls="curated-output"
+          aria-selected="true" tabindex="0">LanguageBind</button>
+      </div>
     </div>
     <ul class="clips" id="clips"></ul>
   </div>
 
   <div class="mode-panel" id="replay-panel" role="tabpanel" aria-labelledby="mode-replay" hidden>
     <div class="live-shell" aria-label="Streaming replay controls">
-      <div class="tabs replay-tabs" role="tablist" aria-label="Streaming-replay backbone">
-        <button class="tab" role="tab" id="r-clipclap" aria-controls="replay-output"
-          aria-selected="false" tabindex="-1">CLIP + CLAP</button>
-        <button class="tab" role="tab" id="r-languagebind" aria-controls="replay-output"
-          aria-selected="true" tabindex="0">LanguageBind</button>
+      <div class="backbone-control">
+        <span class="control-label" id="replay-backbone-label">Backbone</span>
+        <div class="tabs replay-tabs" role="tablist" aria-labelledby="replay-backbone-label">
+          <button class="tab" role="tab" id="r-clipclap" aria-controls="replay-output"
+            aria-selected="false" tabindex="-1">CLIP + CLAP</button>
+          <button class="tab" role="tab" id="r-languagebind" aria-controls="replay-output"
+            aria-selected="true" tabindex="0">LanguageBind</button>
+        </div>
       </div>
       <ul class="clips" id="replay-clips" aria-label="Replay examples"></ul>
     </div>
