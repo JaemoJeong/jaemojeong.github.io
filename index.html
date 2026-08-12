@@ -49,15 +49,15 @@ h1 em{font-style:italic;color:var(--scope)}
 .links{display:flex;gap:.65rem;margin-top:1.15rem;align-items:center;
   justify-content:center;flex-wrap:wrap}
 .project-link{display:inline-flex;align-items:center;justify-content:center;
-  gap:.5rem;min-height:2.75rem;padding:.62rem 1.08rem;border:1px solid #30343b;
-  border-radius:999px;background:#30343b;color:#fff;font-family:var(--sans);
+  gap:.5rem;min-height:2.75rem;padding:.62rem 1.08rem;border:1px solid var(--ink);
+  border-radius:999px;background:transparent;color:var(--ink);font-family:var(--sans);
   font-size:.95rem;font-weight:600;line-height:1;text-decoration:none;
-  box-shadow:0 1px 2px rgba(0,0,0,.14);transition:background-color .16s ease,
-  border-color .16s ease,transform .16s ease}
-.project-link:visited{color:#fff}
+  transition:background-color .16s ease,border-color .16s ease,color .16s ease,
+  transform .16s ease}
+.project-link:visited{color:var(--ink)}
 .project-link .icon{display:inline-flex;width:1.05rem;align-items:center;
   justify-content:center;font-size:1rem}
-a.project-link:hover{background:#17191d;border-color:#17191d;color:#fff;
+a.project-link:hover{background:var(--ink);border-color:var(--ink);color:var(--ground);
   transform:translateY(-1px)}
 a.project-link:focus-visible{outline:2px solid var(--scope);outline-offset:2px}
 .project-link.disabled{color:var(--muted);cursor:default}
