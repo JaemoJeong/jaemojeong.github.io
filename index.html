@@ -140,6 +140,14 @@ table.tl th{font-weight:400;color:var(--muted);text-align:right;
 table.tl th.seg{text-align:center;padding:0 0 .25rem;font-size:.68rem}
 table.tl td{padding:1px}
 .cell{width:1.85rem;height:.92rem;border:1px solid var(--rule);border-radius:2px}
+.split-cell{display:grid;grid-template-rows:1fr 1fr;height:1.25rem;overflow:hidden;background:var(--ground)}
+.split-lane{display:block;min-height:0}
+.split-lane:first-child{border-bottom:1px solid color-mix(in srgb,var(--rule) 72%,transparent)}
+.modality-key{display:inline-grid!important;grid-template-rows:1fr 1fr;width:1.45rem!important;
+  height:1.1rem!important;overflow:hidden;background:var(--ground);font:700 .48rem/.52rem var(--mono);
+  text-align:center;color:var(--ink);font-style:normal}
+.modality-key span:first-child{border-bottom:1px solid var(--rule)}
+.combined-note{margin:0;color:var(--muted);font:.72rem/1.5 var(--mono)}
 .on-gt{background:var(--gt);border-color:var(--gt)}
 .hit{background:var(--hit);border-color:var(--hit)}
 .miss{background:var(--wrong);border-color:var(--wrong)}
@@ -175,7 +183,8 @@ table.replay-tl .cell{width:1.7rem}
 @media (max-width:46rem){.scroll-hint{display:block}}
 @media (max-width:38rem){
   .demo-toolbar{align-items:stretch;flex-direction:column}
-  .mode-tabs{display:grid;grid-template-columns:1fr 1fr}
+  .mode-tabs{display:grid;grid-template-columns:repeat(3,1fr)}
+  .mode-tab{padding:.58rem .45rem;font-size:.76rem}
   .demo-actions{justify-content:flex-start}
   .play-example{width:100%}
 }
@@ -238,6 +247,8 @@ footer code{font-family:var(--mono);font-size:.74rem;color:var(--ink)}
     <nav class="mode-tabs" role="tablist" aria-label="Demo mode">
       <button class="mode-tab" type="button" role="tab" id="mode-curated"
         aria-controls="curated-panel" aria-selected="true" tabindex="0">Curated demo</button>
+      <button class="mode-tab" type="button" role="tab" id="mode-combined"
+        aria-controls="combined-panel" aria-selected="false" tabindex="-1">Combined A/V</button>
       <button class="mode-tab" type="button" role="tab" id="mode-replay"
         aria-controls="replay-panel" aria-selected="false" tabindex="-1">Streaming replay</button>
     </nav>
@@ -259,6 +270,19 @@ footer code{font-family:var(--mono);font-size:.74rem;color:var(--ink)}
       </div>
     </div>
     <ul class="clips" id="clips"></ul>
+  </div>
+
+  <div class="mode-panel" id="combined-panel" role="tabpanel" aria-labelledby="mode-combined" hidden>
+    <div class="backbone-control">
+      <span class="control-label" id="combined-backbone-label">Backbone</span>
+      <div class="tabs combined-tabs" role="tablist" aria-labelledby="combined-backbone-label">
+        <button class="tab" role="tab" id="c-clipclap" aria-controls="combined-output"
+          aria-selected="false" tabindex="-1">CLIP + CLAP</button>
+        <button class="tab" role="tab" id="c-languagebind" aria-controls="combined-output"
+          aria-selected="true" tabindex="0">LanguageBind</button>
+      </div>
+    </div>
+    <ul class="clips" id="combined-clips"></ul>
   </div>
 
   <div class="mode-panel" id="replay-panel" role="tabpanel" aria-labelledby="mode-replay" hidden>
@@ -295,6 +319,22 @@ footer code{font-family:var(--mono);font-size:.74rem;color:var(--ink)}
     </div>
     <p class="scroll-hint">Swipe horizontally to view later seconds.</p>
     <p class="legend">
+      <span><i class="sw" style="background:var(--gt);border-color:var(--gt)"></i>ground truth</span>
+      <span><i class="sw" style="background:var(--hit);border-color:var(--hit)"></i>correct</span>
+      <span><i class="sw" style="background:var(--wrong);border-color:var(--wrong)"></i>false firing</span>
+      <span><i class="sw" style="background:repeating-linear-gradient(135deg,var(--missed) 0 2px,transparent 2px 4px);border-color:var(--missed)"></i>missed</span>
+    </p>
+  </div>
+  <div class="right" id="combined-output" role="tabpanel" aria-labelledby="c-languagebind" hidden>
+    <p class="window" id="combined-window"></p>
+    <p class="combined-note">Each event appears once. The upper lane is audible; the lower lane is visible.</p>
+    <div class="gridwrap" tabindex="0" aria-label="Scrollable combined audio-visual prediction timeline">
+      <table class="tl" id="combined-grid"
+        aria-label="Predictions by method, class, second, and stacked audio-visual lane"></table>
+    </div>
+    <p class="scroll-hint">Swipe horizontally to view later seconds.</p>
+    <p class="legend" aria-label="Combined view legend">
+      <span><i class="sw modality-key" aria-hidden="true"><span>A</span><span>V</span></i>audio top · visual bottom</span>
       <span><i class="sw" style="background:var(--gt);border-color:var(--gt)"></i>ground truth</span>
       <span><i class="sw" style="background:var(--hit);border-color:var(--hit)"></i>correct</span>
       <span><i class="sw" style="background:var(--wrong);border-color:var(--wrong)"></i>false firing</span>
@@ -373,46 +413,61 @@ const segmentCount = () => {
 };
 
 const clipsEl = document.getElementById("clips");
+const combinedClipsEl = document.getElementById("combined-clips");
 const replayClipsEl = document.getElementById("replay-clips");
 function drawClips(){
   const d = DATA();
-  clipsEl.innerHTML = Object.keys(d).map(k =>
+  const curatedButtons = Object.keys(d).map(k =>
     `<li><button class="clip" type="button" data-k="${k}"
       aria-pressed="${k===cur}">${d[k].target}</button></li>`).join("");
+  clipsEl.innerHTML = curatedButtons;
+  combinedClipsEl.innerHTML = curatedButtons;
   replayClipsEl.innerHTML = replayClipKeys().map((k, index) =>
     `<li><button class="clip" type="button" data-k="${k}"
       aria-pressed="${k===cur}">${REPLAY_DATA()[k].shortTitle || `Example ${index + 1}`}</button></li>`).join("");
 }
 function selectClipFromButton(e){
   const b = e.target.closest(".clip"); if(!b) return;
-  cur = b.dataset.k; modeSelection[demoMode] = cur;
+  cur = b.dataset.k;
+  modeSelection[demoMode === "replay" ? "replay" : "curated"] = cur;
   resetClipState(); drawClips(); load();
-  const activeList = demoMode === "replay" ? replayClipsEl : clipsEl;
+  const activeList = demoMode === "replay"
+    ? replayClipsEl
+    : demoMode === "combined" ? combinedClipsEl : clipsEl;
   const selected = [...activeList.querySelectorAll(".clip")]
     .find(button=>button.dataset.k === cur);
   if(selected) selected.focus();
 }
 clipsEl.addEventListener("click", selectClipFromButton);
+combinedClipsEl.addEventListener("click", selectClipFromButton);
 replayClipsEl.addEventListener("click", selectClipFromButton);
-for(const id of ["clipclap","languagebind"]){
-  document.getElementById("t-"+id).addEventListener("click", ()=>{
-    bb = id;
-    for(const o of ["clipclap","languagebind"]){
-      const tab = document.getElementById("t-"+o);
-      tab.setAttribute("aria-selected", String(o===id));
-      tab.tabIndex = o === id ? 0 : -1;
+function setCuratedBackbone(id, focusPrefix=null){
+  bb = id;
+  for(const prefix of ["t", "c"]){
+    for(const other of ["clipclap", "languagebind"]){
+      const tab = document.getElementById(`${prefix}-${other}`);
+      tab.setAttribute("aria-selected", String(other === id));
+      tab.tabIndex = other === id ? 0 : -1;
     }
-    document.getElementById("curated-output").setAttribute("aria-labelledby", "t-"+id);
-    drawClips(); draw();
-  });
+  }
+  document.getElementById("curated-output").setAttribute("aria-labelledby", "t-"+id);
+  document.getElementById("combined-output").setAttribute("aria-labelledby", "c-"+id);
+  drawClips(); draw();
+  if(focusPrefix) document.getElementById(`${focusPrefix}-${id}`).focus();
 }
-document.querySelector(".curated-tabs").addEventListener("keydown", e=>{
-  if(!["ArrowLeft","ArrowRight"].includes(e.key)) return;
-  e.preventDefault();
-  const next = bb === "clipclap" ? "languagebind" : "clipclap";
-  document.getElementById("t-"+next).click();
-  document.getElementById("t-"+next).focus();
-});
+for(const prefix of ["t", "c"]){
+  for(const id of ["clipclap", "languagebind"]){
+    document.getElementById(`${prefix}-${id}`).addEventListener("click", ()=>
+      setCuratedBackbone(id));
+  }
+  document.querySelector(prefix === "t" ? ".curated-tabs" : ".combined-tabs")
+    .addEventListener("keydown", event=>{
+      if(!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+      event.preventDefault();
+      const next = bb === "clipclap" ? "languagebind" : "clipclap";
+      setCuratedBackbone(next, prefix);
+    });
+}
 
 function setReplayBackbone(id, focus=false){
   replayBb = id;
@@ -626,13 +681,8 @@ function playSelectedExample(){
 }
 document.getElementById("play-example").addEventListener("click", playSelectedExample);
 
-function draw(){
-  if(demoMode === "replay"){
-    drawReplay();
-    return;
-  }
-  const c = DATA()[cur];
-  document.getElementById("window").innerHTML = contentClockBlocked
+function curatedClockText(){
+  return contentClockBlocked
     ? `Prediction clock paused until the selected video is playing.`
     : clipEnded
     ? `Clip finished &middot; the end-of-stream signal closes the final boundary;
@@ -641,6 +691,19 @@ function draw(){
       ? `No complete one-second segment has arrived yet. Press play to begin.`
       : `t = <b>${relativeTime.toFixed(1)}s</b> &middot; completed segments
          <b>0&ndash;${arrived-1}</b> have arrived. Nothing later is shown.`;
+}
+
+function draw(){
+  if(demoMode === "replay"){
+    drawReplay();
+    return;
+  }
+  if(demoMode === "combined"){
+    drawCombined();
+    return;
+  }
+  const c = DATA()[cur];
+  document.getElementById("window").innerHTML = curatedClockText();
 
   const line = (bits, name, truth, delay, method, branch) =>
     `<tr><th>${name}</th>` + [...Array(10)].map((_,i)=>{
@@ -688,6 +751,65 @@ function draw(){
   rows.push(...panel("scope0", "SCoPE", true, 0, true));
   rows.push(...panel("scope1", "SCoPE · 1 s latency", true, 1, true));
   document.getElementById("grid").innerHTML = rows.join("");
+}
+
+function combinedLaneState(clip, key, branch, labelIndex, second, unseen){
+  if(unseen) return {cls: "", state: "not observed"};
+  const prediction = Boolean(clip[key][branch][labelIndex][second]);
+  const truth = Boolean(clip.gt[branch][labelIndex][second]);
+  if(key === "gt"){
+    return prediction
+      ? {cls: "on-gt", state: "active"}
+      : {cls: "", state: "inactive"};
+  }
+  if(prediction && truth) return {cls: "hit", state: "correct"};
+  if(prediction) return {cls: "miss", state: "false firing"};
+  if(truth) return {cls: "missed", state: "missed"};
+  return {cls: "", state: "inactive"};
+}
+
+function drawCombined(){
+  const clip = DATA()[cur];
+  document.getElementById("combined-window").innerHTML = curatedClockText();
+  const visibleLabels = clip.labels.map((_, labelIndex)=>
+    ["gt", "dense0", "scope0", "scope1"].some(key=>
+      ["audio", "visual"].some(branch=>
+        clip[key][branch][labelIndex].some(Boolean))) ? labelIndex : -1
+  ).filter(labelIndex=>labelIndex >= 0);
+
+  const line = (key, title, labelIndex, delay)=>{
+    const label = formatEventLabel(clip.labels[labelIndex]);
+    return `<tr><th scope="row">${label}</th>` + [...Array(10)].map((_, second)=>{
+      const lastSettled = clipEnded ? 9 : arrived - 1 - (delay || 0);
+      const unseen = second > lastSettled;
+      const audio = combinedLaneState(clip, key, "audio", labelIndex, second, unseen);
+      const visual = combinedLaneState(clip, key, "visual", labelIndex, second, unseen);
+      const current = lastSettled >= 0 && second === lastSettled;
+      return `<td class="${current ? "now" : ""}${unseen ? " future" : ""}" ` +
+        `aria-label="${title}, ${label}, segment ${second}: audio ${audio.state}; visual ${visual.state}">` +
+        `<div class="cell split-cell" aria-hidden="true">` +
+          `<span class="split-lane ${audio.cls}"></span>` +
+          `<span class="split-lane ${visual.cls}"></span>` +
+        `</div></td>`;
+    }).join("") + `</tr>`;
+  };
+
+  const panel = (key, title, separated, delay, emphasized=false)=>{
+    const rows = [`<tr class="${separated ? "sep" : ""}"><th class="group${emphasized ? " method-primary" : ""}">${title}</th>` +
+      `<td class="group" colspan="10"></td></tr>`];
+    for(const labelIndex of visibleLabels){
+      rows.push(line(key, title, labelIndex, delay));
+    }
+    return rows;
+  };
+
+  const rows = [`<tr><th scope="col">event</th>${[...Array(10)].map((_, second)=>
+    `<th class="seg" scope="col">${second}</th>`).join("")}</tr>`];
+  rows.push(...panel("gt", "ground truth", false, 0));
+  rows.push(...panel("dense0", "open-vocabulary dense", true, 0));
+  rows.push(...panel("scope0", "SCoPE", true, 0, true));
+  rows.push(...panel("scope1", "SCoPE · 1 s latency", true, 1, true));
+  document.getElementById("combined-grid").innerHTML = rows.join("");
 }
 
 // The replay uses only cached predictions from the selected frozen backbone.
@@ -854,10 +976,12 @@ function drawReplay(){
   }
 }
 function setDemoMode(mode, focus=false){
-  modeSelection[demoMode] = cur;
+  const previousMode = demoMode;
+  const staysOnCuratedClip = previousMode !== "replay" && mode !== "replay";
+  modeSelection[demoMode === "replay" ? "replay" : "curated"] = cur;
   demoMode = mode;
-  cur = modeSelection[mode];
-  for(const name of ["curated", "replay"]){
+  cur = modeSelection[mode === "replay" ? "replay" : "curated"];
+  for(const name of ["curated", "combined", "replay"]){
     const selected = name === mode;
     const tab = document.getElementById(`mode-${name}`);
     const panel = document.getElementById(`${name}-panel`);
@@ -866,23 +990,33 @@ function setDemoMode(mode, focus=false){
     panel.hidden = !selected;
   }
   document.getElementById("curated-output").hidden = mode !== "curated";
+  document.getElementById("combined-output").hidden = mode !== "combined";
   document.getElementById("replay-output").hidden = mode !== "replay";
   if(mode === "replay") setReplayBackbone(replayBb);
-  resetClipState();
   drawClips();
-  load();
+  if(staysOnCuratedClip){
+    draw();
+  }else{
+    resetClipState();
+    load();
+  }
   if(focus) document.getElementById(`mode-${mode}`).focus();
 }
 
-for(const mode of ["curated", "replay"]){
+const DEMO_MODES = ["curated", "combined", "replay"];
+for(const mode of DEMO_MODES){
   document.getElementById(`mode-${mode}`).addEventListener("click", ()=>setDemoMode(mode));
 }
 document.querySelector(".mode-tabs").addEventListener("keydown", event=>{
-  if(!["ArrowLeft", "ArrowRight"].includes(event.key)) return;
+  if(!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
   event.preventDefault();
-  const current = document.getElementById("mode-replay").getAttribute("aria-selected") === "true"
-    ? "replay" : "curated";
-  setDemoMode(current === "replay" ? "curated" : "replay", true);
+  const currentIndex = DEMO_MODES.indexOf(demoMode);
+  const nextIndex = event.key === "Home"
+    ? 0
+    : event.key === "End"
+      ? DEMO_MODES.length - 1
+      : (currentIndex + (event.key === "ArrowRight" ? 1 : -1) + DEMO_MODES.length) % DEMO_MODES.length;
+  setDemoMode(DEMO_MODES[nextIndex], true);
 });
 
 window.onYouTubeIframeAPIReady = ()=>{
