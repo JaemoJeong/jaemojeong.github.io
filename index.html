@@ -290,7 +290,7 @@ footer code{font-family:var(--mono);font-size:.74rem;color:var(--ink)}
     LanguageBind — <code>LanguageBind_Image</code> · <code>LanguageBind_Audio_FT</code>
   </p>
   <p>Videos are streamed through YouTube&rsquo;s privacy-enhanced embed; this site does not distribute raw media. Media rights remain with their respective owners.</p>
-  <p class="footnote"><em>* Curated GT uses official LLP annotations; Dense uses normalized cosine at &tau; = 0.85. The paper reports offline SCoPE; the streaming variants above are exploratory and are not evaluated in the paper.</em></p>
+  <p class="footnote"><em>* Curated GT uses official LLP annotations. Open-vocabulary dense uses normalized cosine at &tau; = 0.85. The paper reports offline SCoPE; the streaming variants above are exploratory and are not evaluated in the paper.</em></p>
 </footer>
 </div>
 
@@ -551,7 +551,7 @@ function draw(){
   const rows = [`<tr><th></th>${[...Array(10)].map((_,i)=>
     `<th class="seg">${i}</th>`).join("")}</tr>`];
   rows.push(...panel("gt", "ground truth", false, 0));
-  rows.push(...panel("dense0", "dense cosine · τ = 0.85", true, 0));
+  rows.push(...panel("dense0", "open-vocabulary dense", true, 0));
   rows.push(...panel("scope0", "SCoPE", true, 0));
   rows.push(...panel("scope1", "SCoPE · 1 s latency", true, 1));
   document.getElementById("grid").innerHTML = rows.join("");
@@ -604,7 +604,7 @@ function replayCell(clip, key, branch, labelIndex, second, settled, latestSecond
   const current = !unseen && second === latestSecond;
   const method = {
     gt: "ground truth",
-    dense0: "dense cosine",
+    dense0: "open-vocabulary dense",
     scope0: "SCoPE",
     scope1: "SCoPE one-second latency",
   }[key];
@@ -691,7 +691,7 @@ function drawReplay(){
       clip, "gt", "ground truth", false, seconds, settled,
     ));
     rows.push(...replayPanel(
-      clip, "dense0", "dense cosine · τ = 0.85", true, seconds, settled,
+      clip, "dense0", "open-vocabulary dense", true, seconds, settled,
     ));
     rows.push(...replayPanel(
       clip, "scope0", "SCoPE", true, seconds, settled,
