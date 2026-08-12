@@ -9,6 +9,8 @@
 <meta property="og:description" content="Training-free audio-visual event perception through sparse event competition and reliable cross-modal prior exchange.">
 <meta property="og:type" content="website">
 <title>SCoPE: Training-Free Audio-Visual Event Perception via Sparse Cross-Modal Prior Exchange</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
 <style>
 :root{
   color-scheme:light dark;
@@ -45,10 +47,16 @@ h1 em{font-style:italic;color:var(--scope)}
 .lede{margin:0;max-width:39em;color:var(--muted);font-size:1.02rem}
 .links{display:flex;gap:.65rem;margin-top:1.15rem;align-items:center;flex-wrap:wrap}
 .project-link{display:inline-flex;align-items:center;justify-content:center;
-  min-width:8rem;min-height:3rem;padding:.75rem 1.3rem;border:1px solid var(--rule);
-  border-radius:2px;color:var(--ink);font-family:var(--mono);font-size:1rem;
-  font-weight:600;text-decoration:none}
-a.project-link:hover{border-color:var(--scope)}
+  gap:.5rem;min-height:2.75rem;padding:.62rem 1.08rem;border:1px solid #30343b;
+  border-radius:999px;background:#30343b;color:#fff;font-family:var(--sans);
+  font-size:.95rem;font-weight:600;line-height:1;text-decoration:none;
+  box-shadow:0 1px 2px rgba(0,0,0,.14);transition:background-color .16s ease,
+  border-color .16s ease,transform .16s ease}
+.project-link:visited{color:#fff}
+.project-link .icon{display:inline-flex;width:1.05rem;align-items:center;
+  justify-content:center;font-size:1rem}
+a.project-link:hover{background:#17191d;border-color:#17191d;color:#fff;
+  transform:translateY(-1px)}
 a.project-link:focus-visible{outline:2px solid var(--scope);outline-offset:2px}
 .project-link.disabled{color:var(--muted);cursor:default}
 h2{font-family:var(--serif);font-weight:400;font-size:1.3rem;margin:0 0 .3rem}
@@ -173,12 +181,12 @@ footer code{font-family:var(--mono);font-size:.74rem;color:var(--ink)}
   <nav class="links" aria-label="Project links">
     <a class="project-link"
       href="https://drive.google.com/file/d/1sjqezivGFSlQnWtfo0rZbkfds_KWiCvV/view?usp=sharing"
-      target="_blank" rel="noopener">Paper</a>
+      target="_blank" rel="noopener"><span class="icon" aria-hidden="true"><i class="fas fa-file-pdf"></i></span><span>Paper</span></a>
     <a class="project-link"
       href="https://arxiv.org/abs/2608.07923"
-      target="_blank" rel="noopener">arXiv</a>
+      target="_blank" rel="noopener"><span class="icon" aria-hidden="true"><i class="ai ai-arxiv"></i></span><span>arXiv</span></a>
     <a class="project-link" href="https://github.com/JaemoJeong/SCoPE"
-      target="_blank" rel="noopener">Code</a>
+      target="_blank" rel="noopener"><span class="icon" aria-hidden="true"><i class="fab fa-github"></i></span><span>Code</span></a>
   </nav>
 </header>
 
