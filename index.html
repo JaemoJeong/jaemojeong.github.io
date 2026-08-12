@@ -310,6 +310,7 @@ const REPLAY_BACKBONE = () => REPLAY_BUNDLE.backbones[replayBb];
 const REPLAY_DATA = () => REPLAY_BUNDLE.backbones[replayBb].clips;
 const ACTIVE_DATA = () => demoMode === "replay" ? REPLAY_DATA() : DATA();
 const PLAYER_POLL_MS = 200;
+const REPLAY_LABEL_MEMORY_SECONDS = 10;
 const modeSelection = {
   curated: "I-yer--Q2jU_28_38",
   replay: Object.keys(REPLAY_DATA())[0],
@@ -573,14 +574,18 @@ function replayPrediction(clip, key, branch, labelIndex, second){
   return Boolean(bits[second] && (left || right));
 }
 
-function replayVisibleLabels(clip, key, branch, second){
-  if(second < 0) return [];
+function replayVisibleLabels(clip, key, branch, latestSecond){
+  if(latestSecond < 0) return [];
+  const firstSecond = Math.max(0, latestSecond - REPLAY_LABEL_MEMORY_SECONDS + 1);
   return clip.labels.map((_, labelIndex)=>{
-    const truth = Boolean(clip.gt[branch][labelIndex][second]);
-    const prediction = key === "gt"
-      ? truth
-      : replayPrediction(clip, key, branch, labelIndex, second);
-    return truth || prediction ? labelIndex : -1;
+    for(let second = firstSecond; second <= latestSecond; second += 1){
+      const truth = Boolean(clip.gt[branch][labelIndex][second]);
+      const prediction = key === "gt"
+        ? truth
+        : replayPrediction(clip, key, branch, labelIndex, second);
+      if(truth || prediction) return labelIndex;
+    }
+    return -1;
   }).filter(labelIndex=>labelIndex >= 0);
 }
 
@@ -645,9 +650,10 @@ function replayPanel(clip, key, title, separated, seconds, settled, emphasized =
     }
   }
   if(!visibleCount){
+    const firstSecond = Math.max(0, latestSecond - REPLAY_LABEL_MEMORY_SECONDS + 1);
     const message = latestSecond < 0
       ? "Waiting for a settled segment."
-      : `No active or missed labels at segment ${latestSecond}.`;
+      : `No active or missed labels in segments ${firstSecond}–${latestSecond}.`;
     rows.push(`<tr><th></th><td class="replay-empty" colspan="${seconds.length}">` +
               `${message}</td></tr>`);
   }
