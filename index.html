@@ -832,8 +832,6 @@ function setDemoMode(mode, focus=false){
   modeSelection[demoMode] = cur;
   demoMode = mode;
   cur = modeSelection[mode];
-  document.getElementById("play-example").textContent = mode === "replay"
-    ? "Play replay" : "Play example";
   for(const name of ["curated", "replay"]){
     const selected = name === mode;
     const tab = document.getElementById(`mode-${name}`);
