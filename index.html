@@ -302,7 +302,7 @@ footer code{font-family:var(--mono);font-size:.74rem;color:var(--ink)}
     </p>
   </div>
   <div class="right" id="replay-output" role="tabpanel" aria-labelledby="r-languagebind" hidden>
-    <p class="window">LFAV &middot; <span id="replay-backbone-name">LanguageBind Image + Audio FT</span> &middot; <span id="replay-progress">0 seconds</span></p>
+    <p class="window">LFAV &middot; <span id="replay-backbone-name">LanguageBind</span> &middot; <span id="replay-progress">0 seconds</span></p>
     <p class="window" id="replay-window" role="status" aria-live="polite" aria-atomic="true">No complete one-second segment has arrived yet. Press play to begin.</p>
     <div class="live-timeline-head">
       <h3>Continuous timeline</h3>
@@ -326,7 +326,7 @@ footer code{font-family:var(--mono);font-size:.74rem;color:var(--ink)}
 <footer>
   <p class="checkpoints"><strong>Backbone checkpoints.</strong><br>
     CLIP + CLAP — <code>OpenAI CLIP ViT-B/32</code> · <code>LAION-CLAP HTSAT-tiny / 630k-audioset-best</code><br>
-    LanguageBind — <code>LanguageBind_Image</code> · <code>LanguageBind_Audio_FT</code>
+    LanguageBind — frozen image and audio encoders
   </p>
   <p>Videos are streamed through YouTube&rsquo;s privacy-enhanced embed; this site does not distribute raw media. Media rights remain with their respective owners.</p>
   <p class="footnote"><em>* Curated GT uses official LLP annotations. Open-vocabulary dense uses normalized cosine at &tau; = 0.85. The paper reports offline SCoPE; the streaming variants above are exploratory and are not evaluated in the paper.</em></p>
@@ -423,7 +423,7 @@ function setReplayBackbone(id, focus=false){
   }
   const backbone = REPLAY_BACKBONE();
   document.getElementById("replay-output").setAttribute("aria-labelledby", "r-"+id);
-  document.getElementById("replay-backbone-name").textContent = backbone.displayName;
+  document.getElementById("replay-backbone-name").textContent = backbone.label;
   if(!REPLAY_DATA()[cur]){
     cur = replayClipKeys()[0];
     modeSelection.replay = cur;
