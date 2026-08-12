@@ -61,8 +61,6 @@ h2{font-family:var(--serif);font-weight:400;font-size:1.3rem;margin:0 0 .3rem}
 .mode-tab:focus-visible{outline:2px solid var(--scope);outline-offset:2px}
 .mode-panel{display:block}
 .mode-panel[hidden]{display:none}
-.demo-disclosure{margin:0 0 .75rem;padding:.8rem .9rem;border-left:3px solid var(--scope);
-  background:color-mix(in srgb,var(--scope) 7%,var(--panel));font-size:.86rem}
 .demo-actions{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin:.8rem 0}
 .play-example{display:inline-flex;align-items:center;justify-content:center;min-height:2.75rem;
   padding:.62rem 1rem;border:1px solid var(--scope);border-radius:2px;background:var(--scope);
@@ -70,10 +68,6 @@ h2{font-family:var(--serif);font-weight:400;font-size:1.3rem;margin:0 0 .3rem}
 .play-example:hover{filter:brightness(.94)}
 .play-example:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
 .play-example:disabled{cursor:wait;opacity:.55}
-.play-help{color:var(--muted);font-size:.8rem}
-.viewer-guide{margin:.15rem 0 0;color:var(--muted);font-size:.82rem}
-.viewer-guide strong,.provenance strong{color:var(--ink);font-weight:600}
-.provenance{margin:.7rem 0 0;color:var(--muted);font: .74rem/1.5 var(--mono)}
 .scroll-hint{display:none;margin:.35rem 0 0;color:var(--muted);font: .7rem var(--mono)}
 .figure-stack{display:flex;flex-direction:column;gap:1.35rem;margin-top:1rem}
 .paper-figure{margin:0}
@@ -142,20 +136,7 @@ tr.sep th,tr.sep td{border-top:1px solid var(--rule)}
 .sw{display:inline-block;width:.8rem;height:.8rem;border-radius:2px;
   vertical-align:-1px;margin-right:.3rem;border:1px solid var(--rule)}
 .live-shell{display:flex;flex-direction:column;gap:1.2rem}
-.live-heading{display:flex;flex-direction:column;gap:.35rem}
-.live-heading h3{margin:0;font-family:var(--serif);font-size:1.05rem;font-weight:400}
-.live-badge{align-self:flex-start;margin:0;padding:.24rem .5rem;border:1px solid var(--rule);
-  border-radius:999px;color:var(--muted);font-family:var(--mono);font-size:.69rem;
-  letter-spacing:.06em;text-transform:uppercase}
-.live-disclaimer{margin:0;color:var(--ink);font-family:var(--mono);font-size:.78rem}
 .privacy{margin:.75rem 0 0;color:var(--muted);font-size:.76rem;line-height:1.5}
-.live-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem;
-  margin:0 0 1rem}
-.live-stat{border-bottom:1px solid var(--rule);padding-bottom:.45rem;min-width:0}
-.live-stat dt{color:var(--muted);font: .66rem var(--mono);letter-spacing:.06em;
-  text-transform:uppercase}
-.live-stat dd{margin:.14rem 0 0;color:var(--ink);font: .76rem/1.35 var(--mono);
-  overflow-wrap:anywhere}
 .live-timeline-head{display:flex;justify-content:space-between;gap:1rem;align-items:baseline;
   margin-bottom:.65rem}
 .live-timeline-head h3{margin:0;font-family:var(--serif);font-size:1rem;font-weight:400}
@@ -169,15 +150,13 @@ table.replay-tl tr:first-child th:first-child{z-index:4}
 table.replay-tl .cell{width:1.7rem}
 .replay-empty{color:var(--muted);font: .72rem/1.5 var(--mono);text-align:left;
   padding:.8rem .5rem!important}
-@media (max-width:46rem){
-  .live-stats{grid-template-columns:1fr 1fr}
-  .scroll-hint{display:block}
-}
+@media (max-width:46rem){.scroll-hint{display:block}}
 footer{border-top:1px solid var(--rule);padding-top:1rem;color:var(--muted);
   font-size:.75rem}
 footer p{margin:0}
 footer p+p{margin-top:.55rem}
 footer .checkpoints{font-size:.8rem;line-height:1.7}
+footer .footnote{margin-top:.8rem;font-size:.72rem;max-width:55rem}
 footer strong{color:var(--ink);font-weight:600}
 footer code{font-family:var(--mono);font-size:.74rem;color:var(--ink)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -233,15 +212,10 @@ footer code{font-family:var(--mono);font-size:.74rem;color:var(--ink)}
   </nav>
 
   <div class="mode-panel" id="curated-panel" role="tabpanel" aria-labelledby="mode-curated">
-    <p class="demo-disclosure">The paper evaluates the offline SCoPE pipeline. The zero- and one-second-latency views below are exploratory causal adaptations and are not evaluated in the paper.</p>
-    <p class="note">Choose a frozen backbone and a clip. Cached prefix-only predictions appear as each one-second segment becomes available; no model runs in your browser.</p>
     <div class="demo-actions">
       <button class="play-example" id="play-example" type="button"
-        aria-describedby="play-help" disabled>Play selected example</button>
-      <span class="play-help" id="play-help">Watch the timeline fill from left to right.</span>
+        disabled>Play example</button>
     </div>
-    <p class="viewer-guide"><strong>What to watch.</strong> Compare Dense with SCoPE as each second arrives: green marks correct detections, red marks false activations, and hatched cells are missed events.</p>
-    <p class="provenance"><strong>Ground truth:</strong> official LLP strong temporal annotations &middot; <strong>Dense:</strong> normalized cosine, &tau; = 0.85.</p>
     <div class="tabs curated-tabs" role="tablist" aria-label="Curated-demo backbone">
       <button class="tab" role="tab" id="t-clipclap" aria-controls="curated-output"
         aria-selected="false" tabindex="-1">CLIP + CLAP</button>
@@ -252,13 +226,7 @@ footer code{font-family:var(--mono);font-size:.74rem;color:var(--ink)}
   </div>
 
   <div class="mode-panel" id="replay-panel" role="tabpanel" aria-labelledby="mode-replay" hidden>
-    <div class="live-shell" aria-labelledby="replay-title">
-    <div class="live-heading">
-      <p class="live-badge" id="replay-backbone-badge">LanguageBind · cached causal output</p>
-      <h3 id="replay-title">Streaming replay</h3>
-      <p class="live-disclaimer">Exploratory streaming adaptation — not evaluated in the paper.</p>
-      <p class="note">Precomputed causal replay on LFAV with 10-second causal memory. Choose a frozen backbone; official audio and visual annotations, Dense, zero-latency SCoPE, and one-second-latency SCoPE are revealed as their segments settle. No model runs in the browser.</p>
-    </div>
+    <div class="live-shell" aria-label="Streaming replay controls">
       <div class="tabs replay-tabs" role="tablist" aria-label="Streaming-replay backbone">
         <button class="tab" role="tab" id="r-clipclap" aria-controls="replay-output"
           aria-selected="false" tabindex="-1">CLIP + CLAP</button>
@@ -295,12 +263,7 @@ footer code{font-family:var(--mono);font-size:.74rem;color:var(--ink)}
     </p>
   </div>
   <div class="right" id="replay-output" role="tabpanel" aria-labelledby="r-languagebind" hidden>
-    <dl class="live-stats" aria-label="Replay status">
-      <div class="live-stat"><dt>Dataset</dt><dd>LFAV test · 35 event classes</dd></div>
-      <div class="live-stat"><dt>Backbone</dt><dd id="replay-backbone-name">LanguageBind Image + Audio FT</dd></div>
-      <div class="live-stat"><dt>Ground truth</dt><dd>LFAV strong temporal annotations</dd></div>
-      <div class="live-stat"><dt>Progress</dt><dd id="replay-progress">0 seconds</dd></div>
-    </dl>
+    <p class="window">LFAV &middot; <span id="replay-backbone-name">LanguageBind Image + Audio FT</span> &middot; <span id="replay-progress">0 seconds</span></p>
     <p class="window" id="replay-window" role="status" aria-live="polite" aria-atomic="true">No complete one-second segment has arrived yet. Press play to begin.</p>
     <div class="live-timeline-head">
       <h3>Continuous timeline</h3>
@@ -317,7 +280,7 @@ footer code{font-family:var(--mono);font-size:.74rem;color:var(--ink)}
       <table class="tl replay-tl" id="replay-grid"
         aria-label="Ground truth, Dense, zero-latency SCoPE, and one-second-latency SCoPE by modality, label, and second"></table>
     </div>
-    <p class="privacy">The full timeline fills continuously from left to right. Each method shows only its current predictions plus the current ground-truth labels, so its rows may appear or disappear every second. SCoPE exchanges reliable evidence from the most recent 10 completed segments; it does not reset every 10 seconds. The one-second-latency row settles after the following second arrives, and the end signal closes its final boundary. Outputs were computed in advance and replayed at 1× speed; seeking reveals a different cached prefix and does not run new inference. Each backbone uses ESC-50 audio and MS-COCO train2017 visual centering encoded in its own feature space.</p>
+    <p class="privacy">Cached LFAV replay &middot; 10-second causal memory &middot; 1&times; playback &middot; no browser inference.</p>
   </div>
 </section>
 
@@ -327,6 +290,7 @@ footer code{font-family:var(--mono);font-size:.74rem;color:var(--ink)}
     LanguageBind — <code>LanguageBind_Image</code> · <code>LanguageBind_Audio_FT</code>
   </p>
   <p>Videos are streamed through YouTube&rsquo;s privacy-enhanced embed; this site does not distribute raw media. Media rights remain with their respective owners.</p>
+  <p class="footnote"><em>* Curated GT uses official LLP annotations; Dense uses normalized cosine at &tau; = 0.85. The paper reports offline SCoPE; the streaming variants above are exploratory and are not evaluated in the paper.</em></p>
 </footer>
 </div>
 
@@ -409,8 +373,6 @@ function setReplayBackbone(id, focus=false){
   }
   const backbone = REPLAY_BACKBONE();
   document.getElementById("replay-output").setAttribute("aria-labelledby", "r-"+id);
-  document.getElementById("replay-backbone-badge").textContent =
-    `${backbone.label} · cached causal output`;
   document.getElementById("replay-backbone-name").textContent = backbone.displayName;
   if(!REPLAY_DATA()[cur]){
     cur = Object.keys(REPLAY_DATA())[0];
