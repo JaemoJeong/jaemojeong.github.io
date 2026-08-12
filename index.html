@@ -308,15 +308,25 @@ let demoMode = "curated";
 const DATA = () => BUNDLE.backbones[bb];
 const REPLAY_BACKBONE = () => REPLAY_BUNDLE.backbones[replayBb];
 const REPLAY_DATA = () => REPLAY_BUNDLE.backbones[replayBb].clips;
+const REPLAY_CLIP_ORDER = ["DrDdSyVQN-A", "93C94T6TfhA", "BCQ2bWLSf-Y"];
+const replayClipKeys = () => [
+  ...REPLAY_CLIP_ORDER.filter(key=>key in REPLAY_DATA()),
+  ...Object.keys(REPLAY_DATA()).filter(key=>!REPLAY_CLIP_ORDER.includes(key)),
+];
 const ACTIVE_DATA = () => demoMode === "replay" ? REPLAY_DATA() : DATA();
 const PLAYER_POLL_MS = 200;
+const CONTENT_CLOCK_CONFIRM_POLLS = 2;
+const CONTENT_DURATION_TOLERANCE_SECONDS = 1.5;
 const REPLAY_LABEL_MEMORY_SECONDS = 10;
 const modeSelection = {
   curated: "I-yer--Q2jU_28_38",
-  replay: Object.keys(REPLAY_DATA())[0],
+  replay: replayClipKeys()[0],
 };
 let cur = modeSelection.curated, arrived = 0, clipEnded = false;
 let relativeTime = 0, ytPlayer = null, playerReady = false;
+let expectedContentDuration = null, contentClockCandidateDuration = null;
+let contentClockCandidatePolls = 0, contentClockConfirmPolls = 0;
+let contentClockBlocked = false;
 const MEDIA = () => demoMode === "replay" ? REPLAY_BUNDLE.media[cur] : BUNDLE.media[cur];
 const segmentCount = () => {
   if(demoMode !== "replay") return 10;
@@ -331,7 +341,7 @@ function drawClips(){
   clipsEl.innerHTML = Object.keys(d).map(k =>
     `<li><button class="clip" type="button" data-k="${k}"
       aria-pressed="${k===cur}">${d[k].target}</button></li>`).join("");
-  replayClipsEl.innerHTML = Object.keys(REPLAY_DATA()).map((k, index) =>
+  replayClipsEl.innerHTML = replayClipKeys().map((k, index) =>
     `<li><button class="clip" type="button" data-k="${k}"
       aria-pressed="${k===cur}">${REPLAY_DATA()[k].shortTitle || `Example ${index + 1}`}</button></li>`).join("");
 }
@@ -377,7 +387,7 @@ function setReplayBackbone(id, focus=false){
   document.getElementById("replay-output").setAttribute("aria-labelledby", "r-"+id);
   document.getElementById("replay-backbone-name").textContent = backbone.displayName;
   if(!REPLAY_DATA()[cur]){
-    cur = Object.keys(REPLAY_DATA())[0];
+    cur = replayClipKeys()[0];
     modeSelection.replay = cur;
     resetClipState();
     load();
@@ -400,6 +410,9 @@ document.querySelector(".replay-tabs").addEventListener("keydown", event=>{
 
 function resetClipState(){
   arrived = 0; clipEnded = false; relativeTime = 0; replayRenderKey = "";
+  expectedContentDuration = null; contentClockCandidateDuration = null;
+  contentClockCandidatePolls = 0; contentClockConfirmPolls = 0;
+  contentClockBlocked = false;
 }
 
 function watchUrl(){
@@ -415,10 +428,85 @@ function showWatchFallback(show){
   if(iframe) iframe.hidden = show;
 }
 
-function playerMatchesSelection(){
+function playerVideoId(){
   if(!playerReady || !ytPlayer) return false;
-  try{ return ytPlayer.getVideoData().video_id === MEDIA().videoId; }
-  catch(_error){ return false; }
+  try{
+    const url = new URL(ytPlayer.getVideoUrl());
+    if(url.searchParams.get("v")) return url.searchParams.get("v");
+    const match = url.pathname.match(/\/(?:embed|shorts)\/([^/?]+)/);
+    return match ? match[1] : "";
+  }catch(_error){ return ""; }
+}
+
+function playerMatchesSelection(){
+  return playerVideoId() === MEDIA().videoId;
+}
+
+function readPlausibleContentDuration(){
+  if(!playerMatchesSelection()) return null;
+  let duration;
+  try{ duration = ytPlayer.getDuration(); }catch(_error){ return null; }
+  if(!Number.isFinite(duration) || duration <= 0) return null;
+  return duration + CONTENT_DURATION_TOLERANCE_SECONDS >= MEDIA().end ? duration : null;
+}
+
+function captureCuedContentDuration(){
+  const duration = readPlausibleContentDuration();
+  if(duration === null) return null;
+  expectedContentDuration = duration;
+  contentClockCandidateDuration = null;
+  contentClockCandidatePolls = 0;
+  contentClockConfirmPolls = 0;
+  return duration;
+}
+
+function setContentClockBlocked(blocked){
+  if(contentClockBlocked === blocked) return;
+  contentClockBlocked = blocked;
+  replayRenderKey = "";
+  draw();
+}
+
+function contentClockVerified(){
+  let state;
+  try{ state = ytPlayer.getPlayerState(); }catch(_error){ return false; }
+  if(state !== YT.PlayerState.PLAYING) return false;
+
+  const duration = readPlausibleContentDuration();
+  if(duration === null){
+    contentClockCandidateDuration = null;
+    contentClockCandidatePolls = 0;
+    contentClockConfirmPolls = 0;
+    setContentClockBlocked(true);
+    return false;
+  }
+
+  if(expectedContentDuration === null){
+    const sameCandidate = contentClockCandidateDuration !== null &&
+      Math.abs(duration - contentClockCandidateDuration) <= CONTENT_DURATION_TOLERANCE_SECONDS;
+    contentClockCandidateDuration = duration;
+    contentClockCandidatePolls = sameCandidate ? contentClockCandidatePolls + 1 : 1;
+    if(contentClockCandidatePolls < CONTENT_CLOCK_CONFIRM_POLLS){
+      setContentClockBlocked(true);
+      return false;
+    }
+    expectedContentDuration = duration;
+    contentClockConfirmPolls = 0;
+  }
+
+  if(Math.abs(duration - expectedContentDuration) > CONTENT_DURATION_TOLERANCE_SECONDS){
+    contentClockConfirmPolls = 0;
+    setContentClockBlocked(true);
+    return false;
+  }
+
+  contentClockConfirmPolls += 1;
+  if(contentClockConfirmPolls < CONTENT_CLOCK_CONFIRM_POLLS){
+    setContentClockBlocked(true);
+    return false;
+  }
+  setContentClockBlocked(false);
+  return true;
 }
 
 function finishClip(){
@@ -431,7 +519,7 @@ function finishClip(){
 }
 
 function pollPlayer(){
-  if(!playerMatchesSelection()) return;
+  if(!playerReady || !ytPlayer || !contentClockVerified()) return;
   let absolute;
   try{ absolute = ytPlayer.getCurrentTime(); }catch(_error){ return; }
   if(!Number.isFinite(absolute)) return;
@@ -449,6 +537,7 @@ function pollPlayer(){
 
 function handlePlayerState(event){
   if(!playerMatchesSelection()) return;
+  if(event.data === YT.PlayerState.CUED){ captureCuedContentDuration(); return; }
   if(event.data === YT.PlayerState.ENDED){ finishClip(); return; }
   if(event.data === YT.PlayerState.PLAYING && demoMode === "replay"){
     try{ if(ytPlayer.getPlaybackRate() !== 1) ytPlayer.setPlaybackRate(1); }
@@ -482,7 +571,9 @@ function load(){
 function playSelectedExample(){
   if(!playerReady || !ytPlayer) return;
   const m = MEDIA();
+  const cuedDuration = captureCuedContentDuration();
   resetClipState();
+  expectedContentDuration = cuedDuration;
   showWatchFallback(false);
   try{
     ytPlayer.loadVideoById({
@@ -503,7 +594,9 @@ function draw(){
     return;
   }
   const c = DATA()[cur];
-  document.getElementById("window").innerHTML = clipEnded
+  document.getElementById("window").innerHTML = contentClockBlocked
+    ? `Prediction clock paused until the selected video is playing.`
+    : clipEnded
     ? `Clip finished &middot; the end-of-stream signal closes the final boundary;
        segments <b>0&ndash;9</b> are now settled.`
     : arrived === 0
@@ -674,13 +767,15 @@ function drawReplay(){
   const scope1Settled = clipEnded ? total : Math.max(0, settled - 1);
   const scope1Latest = scope1Settled - 1;
   const seconds = [...Array(total)].map((_, second)=>second);
-  const renderKey = `${replayBb}:${cur}:${settled}:${clipEnded}`;
+  const renderKey = `${replayBb}:${cur}:${settled}:${clipEnded}:${contentClockBlocked}`;
   if(renderKey === replayRenderKey) return;
   replayRenderKey = renderKey;
 
   progress.textContent = `${settled} / ${total} seconds`;
   count.textContent = settled === 0 ? "0 s observed" : `0–${latestSecond} s observed`;
-  status.innerHTML = clipEnded
+  status.innerHTML = contentClockBlocked
+    ? `Prediction clock paused until the selected video is playing.`
+    : clipEnded
     ? `Replay finished &middot; all <b>${total}</b> segments, including the final one-second-latency boundary, are settled.`
     : settled === 0
       ? `No complete one-second segment has arrived yet. Press play to begin.`
