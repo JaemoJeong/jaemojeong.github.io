@@ -128,6 +128,7 @@ td.future .cell{border-style:dashed;opacity:.4}
 td.now .cell{box-shadow:0 0 0 2px var(--scope)}
 .group{color:var(--ink);font-size:.7rem;letter-spacing:.09em;
   text-transform:uppercase;padding-top:.85rem;padding-bottom:.2rem}
+.group.method-primary{font-weight:700}
 table.tl th.branch{color:var(--ink);font-size:.66rem;font-weight:700;letter-spacing:.06em;
   text-transform:uppercase;padding-top:.3rem}
 tr.sep th,tr.sep td{border-top:1px solid var(--rule)}
@@ -534,8 +535,8 @@ function draw(){
       ["gt","dense0","scope0","scope1"]
         .some(r => c[r][br][li].some(x=>x)) ? li : -1).filter(i=>i>=0);
   }
-  const panel = (key, title, rule, delay) => {
-    const out = [`<tr class="${rule?"sep":""}"><th class="group">${title}</th>` +
+  const panel = (key, title, rule, delay, emphasized = false) => {
+    const out = [`<tr class="${rule?"sep":""}"><th class="group${emphasized ? " method-primary" : ""}">${title}</th>` +
                  `<td class="group" colspan="10"></td></tr>`];
     for(const br of ["audio","visual"]){
       if(!shown[br].length) continue;
@@ -552,8 +553,8 @@ function draw(){
     `<th class="seg">${i}</th>`).join("")}</tr>`];
   rows.push(...panel("gt", "ground truth", false, 0));
   rows.push(...panel("dense0", "open-vocabulary dense", true, 0));
-  rows.push(...panel("scope0", "SCoPE", true, 0));
-  rows.push(...panel("scope1", "SCoPE · 1 s latency", true, 1));
+  rows.push(...panel("scope0", "SCoPE", true, 0, true));
+  rows.push(...panel("scope1", "SCoPE · 1 s latency", true, 1, true));
   document.getElementById("grid").innerHTML = rows.join("");
 }
 
@@ -623,13 +624,13 @@ function replayLine(clip, key, branch, labelIndex, seconds, settled, latestSecon
          `</tr>`;
 }
 
-function replayPanel(clip, key, title, separated, seconds, settled){
+function replayPanel(clip, key, title, separated, seconds, settled, emphasized = false){
   const latestSecond = settled - 1;
   const shown = {
     audio: replayVisibleLabels(clip, key, "audio", latestSecond),
     visual: replayVisibleLabels(clip, key, "visual", latestSecond),
   };
-  const rows = [`<tr class="${separated ? "sep" : ""}"><th class="group">${title}</th>` +
+  const rows = [`<tr class="${separated ? "sep" : ""}"><th class="group${emphasized ? " method-primary" : ""}">${title}</th>` +
                 `<td class="group" colspan="${seconds.length}"></td></tr>`];
   let visibleCount = 0;
   for(const branch of ["audio", "visual"]){
@@ -694,10 +695,10 @@ function drawReplay(){
       clip, "dense0", "open-vocabulary dense", true, seconds, settled,
     ));
     rows.push(...replayPanel(
-      clip, "scope0", "SCoPE", true, seconds, settled,
+      clip, "scope0", "SCoPE", true, seconds, settled, true,
     ));
     rows.push(...replayPanel(
-      clip, "scope1", "SCoPE · 1 s latency", true, seconds, scope1Settled,
+      clip, "scope1", "SCoPE · 1 s latency", true, seconds, scope1Settled, true,
     ));
   }
   grid.innerHTML = rows.join("");
