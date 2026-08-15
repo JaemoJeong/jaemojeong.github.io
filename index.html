@@ -47,12 +47,13 @@ h1 em{font-style:italic;color:var(--scope)}
 .links{display:flex;gap:.65rem;margin-top:1.15rem;align-items:center;
   justify-content:center;flex-wrap:wrap}
 .project-link{display:inline-flex;align-items:center;justify-content:center;
-  min-height:2.75rem;padding:.62rem 1.08rem;border:1px solid var(--ink);
+  gap:.5rem;min-height:2.75rem;padding:.62rem 1.08rem;border:1px solid var(--ink);
   border-radius:999px;background:transparent;color:var(--ink);font-family:var(--sans);
   font-size:.95rem;font-weight:600;line-height:1;text-decoration:none;
   transition:background-color .16s ease,border-color .16s ease,color .16s ease,
   transform .16s ease}
 .project-link:visited{color:var(--ink)}
+.button-icon{display:block;width:1.05rem;height:1.05rem;flex:0 0 auto;fill:currentColor}
 a.project-link:hover{background:var(--ink);border-color:var(--ink);color:var(--ground);
   transform:translateY(-1px)}
 a.project-link:focus-visible{outline:2px solid var(--scope);outline-offset:2px}
@@ -73,13 +74,14 @@ h2{font-family:var(--serif);font-weight:400;font-size:1.3rem;margin:0 0 .3rem}
 .mode-panel[hidden]{display:none}
 .demo-actions{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;margin:0}
 .play-example{display:inline-flex;align-items:center;justify-content:center;min-height:2.75rem;
-  padding:.62rem 1.05rem;border:1px solid var(--ink);border-radius:999px;
+  gap:.52rem;padding:.62rem 1.05rem;border:1px solid var(--ink);border-radius:999px;
   background:var(--ink);color:var(--ground);font:600 .86rem var(--mono);cursor:pointer;
   transition:background-color .16s ease,border-color .16s ease,transform .16s ease}
 .play-example:hover{background:var(--scope);border-color:var(--scope);transform:translateY(-1px)}
 .play-example:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
 .play-example:disabled{cursor:wait;opacity:.68}
 .play-example:disabled:hover{background:var(--ink);border-color:var(--ink);transform:none}
+.play-example .button-icon{width:.86rem;height:.86rem}
 .scroll-hint{display:none;margin:.35rem 0 0;color:var(--muted);font: .7rem var(--mono)}
 .figure-stack{display:flex;flex-direction:column;gap:1.35rem;margin-top:1rem}
 .paper-figure{margin:0}
@@ -193,14 +195,15 @@ footer code{font-family:var(--mono);font-size:.74rem;color:var(--ink)}
   <h1>SCoPE: Training-Free Audio-Visual Event Perception via Sparse Cross-Modal Prior Exchange</h1>
   <p class="lede">Training-free audio-visual event perception through sparse event competition and reliable cross-modal prior exchange.</p>
   <nav class="links" aria-label="Project links">
+    <!-- Font Awesome Free 6.7.2: file-pdf, GitHub, and play (CC BY 4.0). Academicons: arXiv (SIL OFL 1.1). -->
     <a class="project-link"
       href="https://drive.google.com/file/d/1sjqezivGFSlQnWtfo0rZbkfds_KWiCvV/view?usp=sharing"
-      target="_blank" rel="noopener">Paper</a>
+      target="_blank" rel="noopener"><svg class="button-icon" viewBox="0 0 512 512" aria-hidden="true" focusable="false"><path d="M0 64C0 28.7 28.7 0 64 0L224 0l0 128c0 17.7 14.3 32 32 32l128 0 0 144-208 0c-35.3 0-64 28.7-64 64l0 144-48 0c-35.3 0-64-28.7-64-64L0 64zm384 64-128 0L256 0 384 128zM176 352l32 0c30.9 0 56 25.1 56 56s-25.1 56-56 56l-16 0 0 32c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-128c0-8.8 7.2-16 16-16zm32 80c13.3 0 24-10.7 24-24s-10.7-24-24-24l-16 0 0 48 16 0zm96-80 32 0c26.5 0 48 21.5 48 48l0 64c0 26.5-21.5 48-48 48l-32 0c-8.8 0-16-7.2-16-16l0-128c0-8.8 7.2-16 16-16zm32 128c8.8 0 16-7.2 16-16l0-64c0-8.8-7.2-16-16-16l-16 0 0 96 16 0zm80-112c0-8.8 7.2-16 16-16l48 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-32 0 0 32 32 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-32 0 0 48c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-128z"/></svg><span>Paper</span></a>
     <a class="project-link"
       href="https://arxiv.org/abs/2608.07923"
-      target="_blank" rel="noopener">arXiv</a>
+      target="_blank" rel="noopener"><svg class="button-icon" viewBox="0 0 448 512" aria-hidden="true" focusable="false"><g transform="matrix(1.5499998 0 0 -1.5499998 -123.19936 553.59966)"><path d="m119.65 351.996c-5.84961.13477-11.1943-3.29883-13.502-8.67578-2.19629-5.27051-.61914-8.9668 4.19727-15.8652 7.05469-10.3799 78.8242-96.5625 78.8242-96.5625l-15.8828-14.8633c-13.3809-13.3779-13.9561-31.333-1.50977-43.7754l18.4922-17.6133-51.5977-63.377c-4.00586-4.26758-6.48535-11.7559-4.24805-17.1309 2.27832-5.53613 7.69727-9.12891 13.6836-9.07031 3.83398.0957 7.43262 1.87402 9.83789 4.86133l61.3691 57.0566 94.5762-90.0703c3.19434-3.08398 7.44336-4.83984 11.8828-4.91016 1.60449.0039 3.19824.245117 4.73242.714844 5.7793 1.80566 10.249 6.41797 11.8711 12.252 1.2998 5.47363-.27637 11.2334-4.18164 15.2832l-83.0859 100.012 14.8789 13.834c11.0957 10.0029 11.1543 27.3906.12695 37.4688l-16.2949 15.6309 56.2559 66.4434.0742.0859.0664.0899c5.02734 6.53125 7.43164 11.5615 4.83984 17.9395-3.13379 5.96875-8.69727 10.29-15.2559 11.8516-.67676.0908-1.35938.13574-2.04297.13671l-.004-.0117c-4.42871-.27051-8.61035-2.13086-11.7754-5.24023l-.13086-.10743-.12304-.11132-65.207-59.127-89.8965 86.2402s-5.33398 6.47754-10.9707 6.61133zm178.104-33.041c.47852-.002.95703-.0332 1.43164-.0957 4.84277-1.33301 8.95605-4.54004 11.4316-8.91016 1.44922-3.5625 1.00293-6.45703-4.19727-13.2148l-56.0586-66.2188-26.375 25.3027 64.9551 58.9062c2.33887 2.41504 5.46484 3.91113 8.8125 4.2168v.0137zM192.436 227.402 334.446 57.244c2.78711-3.48926 4.5293-6.97949 3.3418-10.9121-1.16113-4.30273-4.43457-7.71777-8.68555-9.05664-1.08105-.333984-2.20508-.503906-3.33594-.505859-3.20801.07617-6.26953 1.35645-8.57617 3.58789L175.157 175.642c-11.1719 11.1719-9.48242 26.0195 1.39258 36.8945z"/></g></svg><span>arXiv</span></a>
     <a class="project-link" href="https://github.com/JaemoJeong/SCoPE"
-      target="_blank" rel="noopener">Code</a>
+      target="_blank" rel="noopener"><svg class="button-icon" viewBox="0 0 496 512" aria-hidden="true" focusable="false"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg><span>Code</span></a>
   </nav>
 </header>
 
@@ -239,7 +242,7 @@ footer code{font-family:var(--mono);font-size:.74rem;color:var(--ink)}
     </nav>
     <div class="demo-actions">
       <button class="play-example" id="play-example" type="button" disabled>
-        Play example
+        <svg class="button-icon" viewBox="0 0 384 512" aria-hidden="true" focusable="false"><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80v352c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9l288-176c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg><span>Play example</span>
       </button>
     </div>
   </div>
