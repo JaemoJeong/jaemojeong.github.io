@@ -9,8 +9,6 @@
 <meta property="og:description" content="Training-free audio-visual event perception through sparse event competition and reliable cross-modal prior exchange.">
 <meta property="og:type" content="website">
 <title>SCoPE: Training-Free Audio-Visual Event Perception via Sparse Cross-Modal Prior Exchange</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
 <style>
 :root{
   color-scheme:light dark;
@@ -55,8 +53,11 @@ h1 em{font-style:italic;color:var(--scope)}
   transition:background-color .16s ease,border-color .16s ease,color .16s ease,
   transform .16s ease}
 .project-link:visited{color:var(--ink)}
-.project-link .icon{display:inline-flex;width:1.05rem;align-items:center;
-  justify-content:center;font-size:1rem}
+.project-link .icon{display:inline-flex;width:1.05rem;height:1.05rem;align-items:center;
+  justify-content:center;flex:0 0 auto}
+.project-link .icon svg,.play-example svg{display:block;width:100%;height:100%;
+  fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.play-example svg{width:1rem;height:1rem;flex:0 0 auto;fill:currentColor;stroke:none}
 a.project-link:hover{background:var(--ink);border-color:var(--ink);color:var(--ground);
   transform:translateY(-1px)}
 a.project-link:focus-visible{outline:2px solid var(--scope);outline-offset:2px}
@@ -199,12 +200,12 @@ footer code{font-family:var(--mono);font-size:.74rem;color:var(--ink)}
   <nav class="links" aria-label="Project links">
     <a class="project-link"
       href="https://drive.google.com/file/d/1sjqezivGFSlQnWtfo0rZbkfds_KWiCvV/view?usp=sharing"
-      target="_blank" rel="noopener"><span class="icon" aria-hidden="true"><i class="fas fa-file-pdf"></i></span><span>Paper</span></a>
+      target="_blank" rel="noopener"><span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 2.75h8l4 4V21.25H6z"/><path d="M14 2.75v4h4M9 12h6M9 16h6"/></svg></span><span>Paper</span></a>
     <a class="project-link"
       href="https://arxiv.org/abs/2608.07923"
-      target="_blank" rel="noopener"><span class="icon" aria-hidden="true"><i class="ai ai-arxiv"></i></span><span>arXiv</span></a>
+      target="_blank" rel="noopener"><span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 15 15 9M10 7h7v7"/><path d="M17 12v7H5V7h7"/></svg></span><span>arXiv</span></a>
     <a class="project-link" href="https://github.com/JaemoJeong/SCoPE"
-      target="_blank" rel="noopener"><span class="icon" aria-hidden="true"><i class="fab fa-github"></i></span><span>Code</span></a>
+      target="_blank" rel="noopener"><span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m8.5 8-4 4 4 4M15.5 8l4 4-4 4M13.5 5l-3 14"/></svg></span><span>Code</span></a>
   </nav>
 </header>
 
@@ -243,7 +244,7 @@ footer code{font-family:var(--mono);font-size:.74rem;color:var(--ink)}
     </nav>
     <div class="demo-actions">
       <button class="play-example" id="play-example" type="button" disabled>
-        <i class="fa-solid fa-play" aria-hidden="true"></i><span>Play example</span>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 4 13 8-13 8z"/></svg><span>Play example</span>
       </button>
     </div>
   </div>
