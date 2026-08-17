@@ -30,11 +30,11 @@ python3 -m http.server 8765
 Then open <http://127.0.0.1:8765/>.
 
 The replay supports only the five precomputed LFAV examples included in the
-page data: a visual guitar-to-chainsaw transition, a guitar-and-singing
+page data: a violin performance transitioning to applause, a guitar-and-singing
 performance, a continuous acoustic-guitar performance, a chainsaw
-demonstration, and a basketball game. Their full lengths are 130, 230, 101,
-113, and 136 one-second segments; only the prior memory is
-limited to 10 seconds. The page does not
+demonstration, and a basketball game. Their full lengths are 63, 230, 101, 113,
+and 136 one-second segments; only the prior memory is limited to 10 seconds.
+The page does not
 accept arbitrary videos or claim live inference. Source videos remain on
 YouTube and are loaded through the privacy-enhanced embed; raw LFAV media is not
 redistributed by this repository.
