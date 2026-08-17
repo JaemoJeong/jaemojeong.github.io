@@ -9,8 +9,9 @@ figures, prediction payload, styles, and JavaScript are embedded in
 `index.html`.
 
 The separate **Streaming replay** tab is an exploratory causal adaptation that
-was not evaluated in the paper. It uses three longer LFAV test videos and lets
-the viewer switch between frozen **CLIP + CLAP** and **LanguageBind** outputs;
+was not evaluated in the paper. It starts with a focused 10-second multi-label
+excerpt and retains the three longer LFAV test-video replays. The viewer can
+switch between frozen **CLIP + CLAP** and **LanguageBind** outputs;
 LanguageBind is the default. Official strong audio/visual annotations are
 revealed alongside Dense, zero-latency SCoPE, and its one-second-latency
 readout. SCoPE exchanges reliable evidence over a trailing 10-second causal
@@ -29,10 +30,11 @@ python3 -m http.server 8765
 
 Then open <http://127.0.0.1:8765/>.
 
-The replay supports only the three precomputed LFAV examples included in the
-page data: a basketball game, a continuous acoustic-guitar performance, and a
-chainsaw demonstration. Their full lengths are 136, 101, and 113 one-second
-segments; only the prior memory is limited to 10 seconds. The page does not
+The replay supports only the four precomputed examples included in the page
+data: a 10-second basketball-and-speech introduction, a continuous
+acoustic-guitar performance, a chainsaw demonstration, and the full basketball
+game. Their lengths are 10, 101, 113, and 136 one-second segments; only the
+prior memory is limited to 10 seconds. The page does not
 accept arbitrary videos or claim live inference. Source videos remain on
 YouTube and are loaded through the privacy-enhanced embed; raw LFAV media is not
 redistributed by this repository.
