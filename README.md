@@ -11,8 +11,8 @@ figures, prediction payload, styles, and JavaScript are embedded in
 The separate **Streaming replay** tab is an exploratory causal adaptation that
 was not evaluated in the paper. The default CLIP + CLAP view opens with one
 continuous 25-second LFAV excerpt that alternates between shofar and speech
-five times without overlapping labels. Its fused audio-visual SCoPE readout is
-shown alongside the official ground truth and the frozen dense baseline. The
+five times without overlapping labels. Its audio and visual SCoPE readouts are shown separately alongside the
+official ground truth and the frozen dense baseline. The
 causal state is reset at the excerpt boundary, so no earlier or future segment
 is used. Four longer LFAV examples remain available for both CLIP + CLAP and
 LanguageBind.
